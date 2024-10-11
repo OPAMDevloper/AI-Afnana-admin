@@ -6,6 +6,9 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';
+import { Icon } from '@mui/material';
+import { Icons } from 'react-toastify';
+import ApiService from 'src/service/network_service';
 
 // ----------------------------------------------------------------------
 
@@ -13,9 +16,25 @@ type UserTableToolbarProps = {
   numSelected: number;
   filterName: string;
   onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  type: string;
+  idsList: string[];
+
+  // pass deledte funtion
+
+  onDeleteRow: (id: string[]) => void;
+  onTrashRow: (id: string[]) => void;
+  onRestoreRow: (id: string[]) => void;
 };
 
-export function UserTableToolbar({ numSelected, filterName, onFilterName }: UserTableToolbarProps) {
+
+
+
+
+
+export function UserTableToolbar({ numSelected, filterName, onFilterName, type , idsList  , onDeleteRow, onRestoreRow, onTrashRow }: UserTableToolbarProps) {
+ 
+
+
   return (
     <Toolbar
       sx={{
@@ -49,11 +68,31 @@ export function UserTableToolbar({ numSelected, filterName, onFilterName }: User
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-          </IconButton>
-        </Tooltip>
+        type === "trash" ? (
+          <>
+           
+           <div>
+            <Tooltip title="Deete">
+              <IconButton onClick={() => onRestoreRow(idsList)}>
+               
+              <Iconify icon="mdi:restore" />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Restore">
+              <IconButton onClick={() => onDeleteRow(idsList)}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            </Tooltip>
+            </div>
+          </>
+        ) : (
+          <Tooltip title="Delete">
+            <IconButton onClick={() => onTrashRow(idsList)}>
+              <Iconify icon="solar:trash-bin-trash-bold" />
+            </IconButton>
+          </Tooltip>
+        )
       ) : (
         <Tooltip title="Filter list">
           <IconButton>
@@ -61,6 +100,7 @@ export function UserTableToolbar({ numSelected, filterName, onFilterName }: User
           </IconButton>
         </Tooltip>
       )}
+
     </Toolbar>
   );
 }

@@ -12,8 +12,7 @@ export default function Page() {
       <Helmet>
         <title> {`Users - ${CONFIG.appName}`}</title>
       </Helmet>
-
-      <UserView type="all" />
+      <UserView  type='trash' />
     </>
   );
 }
