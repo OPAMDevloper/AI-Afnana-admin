@@ -7,13 +7,13 @@ import { ProductsView } from 'src/sections/product/view';
 // ----------------------------------------------------------------------
 
 export default function Page() {
-  return (
-    <>
-      <Helmet>
-        <title> {`Products - ${CONFIG.appName}`}</title>
-      </Helmet>
+    return (
+        <>
+            <Helmet>
+                <title> {`Products - ${CONFIG.appName}`}</title>
+            </Helmet>
 
-      <ProductsView type='all' />
-    </>
-  );
+            <ProductsView />
+        </>
+    );
 }

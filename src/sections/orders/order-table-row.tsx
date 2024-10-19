@@ -17,7 +17,7 @@ import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
 
-export type UserProps = {
+export type OrdersProps = {
   _id: string;
   name: string;
   status: string;
@@ -27,8 +27,8 @@ export type UserProps = {
   createdAt: string;
 };
 
-type UserTableRowProps = {
-  row: UserProps;
+type OrderTableRowProps = {
+  row: OrdersProps;
   type: string;
   selected: boolean;
   onSelectRow: () => void;
@@ -41,7 +41,7 @@ type UserTableRowProps = {
 
 
 
-export function UserTableRow({ row, type, selected, onSelectRow, onDeleteRow, onRestoreRow, onEditRow, onTrashRow }: UserTableRowProps) {
+export function OrderTableRow({ row, type, selected, onSelectRow, onDeleteRow, onRestoreRow, onEditRow, onTrashRow }: OrderTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
   const router = useRouter();
 

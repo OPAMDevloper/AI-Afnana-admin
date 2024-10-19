@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -7,15 +7,21 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
+import ProfileSidebar from 'src/sections/user/view/profileSidebar';
+import CategoryManagement from 'src/pages/categoryPage';
 
 // ----------------------------------------------------------------------
 
 export const HomePage = lazy(() => import('src/pages/home'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
+const AddEditUserPage = React.lazy(() => import('src/pages/userAddEdit'));
+const profileSidebar = React.lazy(() => import('src/sections/user/view/profileSidebar'));
 export const TrashUserPage = lazy(() => import('src/pages/trashuser'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
+const TrashProductPage = lazy(() => import('src/pages/trashproduct'));
+const AddEditProductPage = lazy(() => import('src/pages/addEditProduct'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 // ----------------------------------------------------------------------
@@ -46,9 +52,23 @@ export function Router() {
       children: [
         { element: <HomePage />, index: true },
         { path: 'user', element: <UserPage /> },
-        {path : 'trashuser' , element : <TrashUserPage />},
+        { path: 'trashuser', element: <TrashUserPage /> },
         { path: 'products', element: <ProductsPage /> },
+        { path: 'add-product', element: <AddEditProductPage /> },
+        { path: 'product/:id/edit', element: <AddEditProductPage /> },
+        { path: 'trash-product', element: <TrashProductPage />, },
+        { path: 'category', element: <CategoryManagement /> },
         { path: 'blog', element: <BlogPage /> },
+        {
+          path: 'user/:id/edit',
+          element: <AddEditUserPage />,
+        },
+        {
+          path: 'profile/:id',
+          element: <ProfileSidebar />,
+        },
+        { path: 'add-user', element: <AddEditUserPage /> },
+
       ],
     },
 
@@ -68,5 +88,6 @@ export function Router() {
       path: '*',
       element: <Navigate to="/404" replace />,
     },
+
   ]);
 }

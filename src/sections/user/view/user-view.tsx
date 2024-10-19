@@ -205,6 +205,7 @@ import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
+import { useRouter } from 'src/routes/hooks';
 import TablePagination from '@mui/material/TablePagination';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
@@ -224,6 +225,7 @@ export function UserView({ type }: { type: string }) {
   const [filterName, setFilterName] = useState('');
   const [users, setUsers] = useState<UserProps[]>([]);
   const [selectedRow, setSelectedRow] = useState<string[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     // Fetch user data from API
@@ -264,7 +266,7 @@ export function UserView({ type }: { type: string }) {
     try {
       const response = await new ApiService().delete(`admin/customer/delete-many`, { ids: idss });
       console.log('Response:', response);
-      
+
       if (response.statusCode === 200) {
         toast.success('User deleted successfully');
         setUsers(users.filter((user) => !idss.includes(user._id)));
@@ -280,11 +282,11 @@ export function UserView({ type }: { type: string }) {
   }
 
 
-  const handleRestoreUser = async (idss : string[]) => {
+  const handleRestoreUser = async (idss: string[]) => {
     try {
       const response = await new ApiService().post(`admin/customer/restore-many`, { ids: idss });
 
-      
+
       if (response.statusCode === 200) {
         toast.success('User restored successfully');
         setUsers(users.filter((user) => !idss.includes(user._id)));
@@ -304,16 +306,14 @@ export function UserView({ type }: { type: string }) {
 
       const response = await new ApiService().post(`admin/customer/trash-many`, { ids: idss });
       console.log('Response:', response);
-      
+
       if (response.statusCode === 200) {
         toast.success('User trashed successfully');
         // remove the deleted user from the table
         setUsers(users.filter((user) => !idss.includes(user._id)));
         setSelectedRow([]);
 
-      }
-
-      // Optionally, refresh the user list or update the state
+      } 
     } catch (error) {
       toast.error('Error deleting user:', error);
       console.error('Error deleting user:', error);
@@ -379,7 +379,7 @@ export function UserView({ type }: { type: string }) {
                 }
                 }
                 headLabel={[
-                  { id: 'username', label: 'Username' },
+                  { id: 'name', label: 'name' },
                   { id: 'email', label: 'Email' },
                   { id: 'createdAt', label: 'Created At' },
                   { id: 'status', label: 'Status' },
@@ -408,37 +408,33 @@ export function UserView({ type }: { type: string }) {
                       }}
                       onDeleteRow={(id) => {
 
-                        setSelectedRow((prevSelectedRow) => { 
+                        setSelectedRow((prevSelectedRow) => {
 
-                          const updatedSelectedRow = [ id];
+                          const updatedSelectedRow = [id];
                           handleDeleteUser(updatedSelectedRow); // Pass updated state if needed 
 
                           return updatedSelectedRow;
                         })
                       }}
                       onEditRow={(id) => {
-                        setSelectedRow([id]);
-                        // return table.onEditRow(id);
-                      }}
-                      onRestoreRow={(id) => { 
 
-                        // setSelectedRow(ids => [...ids, id]);
-                        // handleRestoreUser();
+                        router.push(`/user/${id}/edit`);
+                      }}
+                      onRestoreRow={(id) => {
                         setSelectedRow((prevSelectedRow) => {
-                          const updatedSelectedRow = [ id];
-                          handleRestoreUser(updatedSelectedRow); // Pass updated state if needed
+                          const updatedSelectedRow = [id];
+                          handleRestoreUser(updatedSelectedRow);
                           return updatedSelectedRow;
                         })
                       }}
                       onTrashRow={(id) => {
 
-                        
+
                         setSelectedRow((prevSelectedRow) => {
-                          const updatedSelectedRow = [ id];
-                          handleTrashUser(updatedSelectedRow); // Pass updated state if needed
+                          const updatedSelectedRow = [id];
+                          handleTrashUser(updatedSelectedRow);
                           return updatedSelectedRow;
                         });
-                        // return table.onTrashRow(id);
                       }}
                     />
                   ))}
@@ -472,7 +468,7 @@ export function UserView({ type }: { type: string }) {
 
 export function useTable() {
   const [page, setPage] = useState(0);
-  const [orderBy, setOrderBy] = useState('username'); // Change to a field that exists in your data
+  const [orderBy, setOrderBy] = useState('name'); // Change to a field that exists in your data
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState<string[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');

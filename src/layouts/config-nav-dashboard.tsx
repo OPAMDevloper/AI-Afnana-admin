@@ -1,3 +1,6 @@
+import { Icon } from '@iconify/react';
+import { Icons } from 'react-toastify';
+import { Iconify } from 'src/components/iconify';
 import { Label } from 'src/components/label';
 import { SvgColor } from 'src/components/svg-color';
 
@@ -11,7 +14,7 @@ export const navData = [
   {
     title: 'Dashboard',
     path: '/',
-    icon: icon('ic-analytics'),
+    icon: icon('ic-dashboard'),
   },
   {
     title: 'User',
@@ -19,33 +22,54 @@ export const navData = [
     icon: icon('ic-user'),
   },
   {
+    title: 'Add User',
+    path: '/add-user',
+    icon: icon('ic-user'),
+  },
+  {
     title: 'Trash User',
     path: '/trashuser',
     icon: icon('ic-user'),
   },
+
   {
     title: 'Product',
     path: '/products',
     icon: icon('ic-cart'),
-    info: (
-      <Label color="error" variant="inverted">
-        +3
-      </Label>
-    ),
   },
   {
-    title: 'Blog',
-    path: '/blog',
-    icon: icon('ic-blog'),
+    title: 'Add Products',
+    path: '/add-product',
+    icon: icon('ic-cart'),
   },
   {
-    title: 'Sign in',
-    path: '/sign-in',
-    icon: icon('ic-lock'),
+    title: 'Trash Product',
+    path: '/trash-product',
+    icon: icon('ic-cart'),
   },
   {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic-disabled'),
+    title: 'Category',
+    path: '/category',
+    icon: icon('ic-category'),
   },
+  {
+    title: "Order",
+    path: '/orders',
+    icon: icon('ic-order')
+  }
+  // {
+  //   title: 'Blog',
+  //   path: '/blog',
+  //   icon: icon('ic-blog'),
+  // },
+  // {
+  //   title: 'Sign in',
+  //   path: '/sign-in',
+  //   icon: icon('ic-lock'),
+  // },
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: icon('ic-disabled'),
+  // },
 ];

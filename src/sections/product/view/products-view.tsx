@@ -1,19 +1,28 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Unstable_Grid2';
-import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
 
 import { _products } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
-import { ProductItem } from '../product-item';
-import { ProductSort } from '../product-sort';
 import { CartIcon } from '../product-cart-widget';
-import { ProductFilters } from '../product-filters';
 
 import type { FiltersProps } from '../product-filters';
+import { Card, TableBody } from '@mui/material';
+import { ProdcuttableToolbar } from '../product-table-toolbar';
+import { useTable } from 'src/sections/user/view';
+import { useRouter } from 'src/routes/hooks';
+import { ProductProps, ProductTableRow } from '../product-table-row';
+import ApiService from 'src/service/network_service';
+import { applyFilter, emptyRows, getComparator } from 'src/sections/product/utils';
+import { toast } from 'react-toastify';
+import { Scrollbar } from 'src/components/scrollbar';
+import { TableContainer } from '@mui/material';
+import { Table } from '@mui/material';
+import { TableEmptyRows } from 'src/sections/user/table-empty-rows';
+import { TableNoData } from 'src/sections/user/table-no-data';
+import { TablePagination } from '@mui/material';
+import { ProductTableHead } from '../product-table-head';
 
 // ----------------------------------------------------------------------
 
@@ -57,7 +66,8 @@ const defaultFilters = {
   category: CATEGORY_OPTIONS[0].value,
 };
 
-export function ProductsView() {
+export function ProductsView({ type = 'all' }) {
+
   const [sortBy, setSortBy] = useState('featured');
 
   const [openFilter, setOpenFilter] = useState(false);
@@ -84,6 +94,106 @@ export function ProductsView() {
     (key) => filters[key as keyof FiltersProps] !== defaultFilters[key as keyof FiltersProps]
   );
 
+
+  const table = useTable();
+  const [filterName, setFilterName] = useState('');
+  const [product, setProduct] = useState<ProductProps[]>([]);
+  const [selectedRow, setSelectedRow] = useState<string[]>([]);
+  const router = useRouter();
+  ;
+  useEffect(() => {
+    // Fetch user data from API
+    const fetchUsers = async () => {
+      try {
+        if (type === 'trash') {
+          const response = await new ApiService().get('admin/product/show/trash/all');
+
+          setProduct(response.data.data);
+        } else {
+
+          const response = await new ApiService().get('admin/product/all');
+          console.log('Response:', response);
+
+          setProduct(response.data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, [type]);
+
+  const dataFiltered: ProductProps[] = applyFilter({
+    inputData: product,
+    comparator: getComparator(table.order, table.orderBy),
+    filterName,
+  });
+
+
+
+  const notFound = !dataFiltered.length && !!filterName;
+
+
+
+  const handleDeleteUser = async (idss: string[]) => {
+    try {
+      const response = await new ApiService().delete(`admin/product/delete-many`, { ids: idss });
+      console.log('Response:', response);
+
+      if (response.statusCode === 200) {
+        toast.success('User deleted successfully');
+        setProduct(product.filter((product) => !idss.includes(product._id)));
+        setSelectedRow([]);
+        table.onResetPage();
+      }
+
+      // Optionally, refresh the user list or update the state
+    } catch (error) {
+      console.error('Error delete user:', error);
+      toast.error('Error deleting user:', error);
+    }
+  }
+
+
+  const handleRestoreUser = async (idss: string[]) => {
+    try {
+      const response = await new ApiService().post(`admin/product/restore-many`, { ids: idss });
+
+
+      if (response.statusCode === 200) {
+        toast.success('User restored successfully');
+        setProduct(product.filter((product) => !idss.includes(product._id)));
+        setSelectedRow([]);
+        table.onResetPage();
+      }
+
+      // Optionally, refresh the user list or update the state
+    } catch (error) {
+      console.error('Error restore user:', error);
+      toast.error('Error deleting user:', error);
+    }
+  }
+
+  const handleTrashUser = async (idss: string[]) => {
+    try {
+
+      const response = await new ApiService().post(`admin/product/trash-many`, { ids: idss });
+      console.log('Response:', response);
+
+      if (response.statusCode === 200) {
+        toast.success('User trashed successfully');
+        // remove the deleted user from the table
+        setProduct(product.filter((product) => !idss.includes(product._id)));
+        setSelectedRow([]);
+
+      }
+    } catch (error) {
+      toast.error('Error deleting user:', error);
+      console.error('Error deleting user:', error);
+    }
+  }
+
   return (
     <DashboardContent>
       <Typography variant="h4" sx={{ mb: 5 }}>
@@ -92,53 +202,135 @@ export function ProductsView() {
 
       <CartIcon totalItems={8} />
 
-      <Box
-        display="flex"
-        alignItems="center"
-        flexWrap="wrap-reverse"
-        justifyContent="flex-end"
-        sx={{ mb: 5 }}
-      >
-        <Box gap={1} display="flex" flexShrink={0} sx={{ my: 1 }}>
-          <ProductFilters
-            canReset={canReset}
-            filters={filters}
-            onSetFilters={handleSetFilters}
-            openFilter={openFilter}
-            onOpenFilter={handleOpenFilter}
-            onCloseFilter={handleCloseFilter}
-            onResetFilter={() => setFilters(defaultFilters)}
-            options={{
-              genders: GENDER_OPTIONS,
-              categories: CATEGORY_OPTIONS,
-              ratings: RATING_OPTIONS,
-              price: PRICE_OPTIONS,
-              colors: COLOR_OPTIONS,
-            }}
-          />
 
-          <ProductSort
-            sortBy={sortBy}
-            onSort={handleSort}
-            options={[
-              { value: 'featured', label: 'Featured' },
-              { value: 'newest', label: 'Newest' },
-              { value: 'priceDesc', label: 'Price: High-Low' },
-              { value: 'priceAsc', label: 'Price: Low-High' },
-            ]}
-          />
-        </Box>
-      </Box>
+      <Card>
+        <ProdcuttableToolbar
+          numSelected={table.selected.length}
+          filterName={filterName}
+          idsList={selectedRow}
+          type={type}
+          onDeleteRow={(ids: string[]) => {
+            handleDeleteUser(ids);
+          }}
+          onRestoreRow={(ids: string[]) => {
+            handleRestoreUser(ids);
+          }}
+          onTrashRow={(ids: string[]) => {
+            handleTrashUser(ids);
+          }}
+          onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setFilterName(event.target.value);
+            table.onResetPage();
+          }}
+        />
 
-      <Grid container spacing={3}>
-        {_products.map((product) => (
-          <Grid key={product.id} xs={12} sm={6} md={3}>
-            <ProductItem product={product} />
-          </Grid>
-        ))}
-      </Grid>
+        <Scrollbar>
+          <TableContainer sx={{ overflow: 'unset' }}>
+            <Table sx={{ minWidth: 800 }}>
+              <ProductTableHead
+                order={table.order}
+                orderBy={table.orderBy}
+                rowCount={product.length}
+                numSelected={table.selected.length}
+                onSort={table.onSort}
+                onSelectAllRows={(checked) => {
+                  if (checked) {
+                    setSelectedRow(product.map((user: any) => user._id));
+                  } else {
+                    setSelectedRow([]);
+                  }
+                  return table.onSelectAllRows(
+                    checked,
+                    product.map((user: any) => user._id)
+                  );
+                }
+                }
+                headLabel={[
+                  { id: 'name', label: 'name' },
+                  { id: 'category', label: 'category' },
+                  { id: 'price', label: 'price' },
+                  { id: 'quantity', label: 'quantity' },
+                  { id: 'createdAt', label: 'Created At' },
+                  { id: 'status', label: 'Status' },
+                  { id: 'options', label: 'Options' },
+                ]}
+              />
+              <TableBody>
+                {dataFiltered
+                  .slice(
+                    table.page * table.rowsPerPage,
+                    table.page * table.rowsPerPage + table.rowsPerPage
+                  )
+                  .map((row: any) => (
+                    <ProductTableRow
+                      type={type}
+                      key={row._id}
+                      row={row}
+                      selected={table.selected.includes(row._id)}
+                      onSelectRow={() => {
+                        if (selectedRow.includes(row._id)) {
+                          setSelectedRow(selectedRow.filter((id) => id !== row._id));
+                        } else {
+                          setSelectedRow([...selectedRow, row._id]);
+                        }
+                        return table.onSelectRow(row._id);
+                      }}
+                      onDeleteRow={(id) => {
 
-      <Pagination count={10} color="primary" sx={{ mt: 8, mx: 'auto' }} />
+                        setSelectedRow((prevSelectedRow) => {
+
+                          const updatedSelectedRow = [id];
+                          handleDeleteUser(updatedSelectedRow); // Pass updated state if needed 
+
+                          return updatedSelectedRow;
+                        })
+                      }}
+                      onEditRow={(id) => {
+
+                        router.push(`/product/${id}/edit`);
+                      }}
+                      onRestoreRow={(id) => {
+                        setSelectedRow((prevSelectedRow) => {
+                          const updatedSelectedRow = [id];
+                          handleRestoreUser(updatedSelectedRow);
+                          return updatedSelectedRow;
+                        })
+                      }}
+                      onTrashRow={(id) => {
+
+
+                        setSelectedRow((prevSelectedRow) => {
+                          const updatedSelectedRow = [id];
+                          handleTrashUser(updatedSelectedRow);
+                          return updatedSelectedRow;
+                        });
+                      }}
+                    />
+                  ))}
+
+                <TableEmptyRows
+                  height={68}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, product.length)}
+                />
+
+                {notFound && <TableNoData searchQuery={filterName} />}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Scrollbar>
+
+        <TablePagination
+          component="div"
+          page={table.page}
+          count={product.length}
+          rowsPerPage={table.rowsPerPage}
+          onPageChange={table.onChangePage}
+          rowsPerPageOptions={[5, 10, 25]}
+          onRowsPerPageChange={table.onChangeRowsPerPage}
+        />
+      </Card>
+
+
     </DashboardContent>
   );
 }

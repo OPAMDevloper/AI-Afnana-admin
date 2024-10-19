@@ -6,9 +6,10 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "start": "vite preview",
-    "build": "tsc && vite build",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
     "fm:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",

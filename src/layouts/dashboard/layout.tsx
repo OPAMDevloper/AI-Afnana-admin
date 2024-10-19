@@ -81,8 +81,8 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
             rightArea: (
               <Box gap={1} display="flex" alignItems="center">
                 <Searchbar />
-                <LanguagePopover data={_langs} />
-                <NotificationsPopover data={_notifications} />
+                {/* <LanguagePopover data={_langs} /> */}
+                {/* <NotificationsPopover data={_notifications} /> */}
                 <AccountPopover
                   data={[
                     {
@@ -95,11 +95,11 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                       href: '#',
                       icon: <Iconify width={22} icon="solar:shield-keyhole-bold-duotone" />,
                     },
-                    {
-                      label: 'Settings',
-                      href: '#',
-                      icon: <Iconify width={22} icon="solar:settings-bold-duotone" />,
-                    },
+                    // {
+                    //   label: 'Settings',
+                    //   href: '#',
+                    //   icon: <Iconify width={22} icon="solar:settings-bold-duotone" />,
+                    // },
                   ]}
                 />
               </Box>

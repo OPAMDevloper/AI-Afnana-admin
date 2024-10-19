@@ -123,40 +123,40 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
- 
+
 
 import { useRouter } from 'src/routes/hooks';
-import { Iconify } from 'src/components/iconify'; 
-import ApiService from 'src/service/network_service';  
+import { Iconify } from 'src/components/iconify';
+import ApiService from 'src/service/network_service';
 import { toast } from 'react-toastify';
 
 export function SignInView() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');  
-  const [password, setPassword] = useState(''); 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false); // State for loading
 
   // Create a stable instance of ApiService using useMemo
-  
+
 
   const handleSignIn = useCallback(async () => {
-    setLoading(true); 
+    setLoading(true);
     try {
       const response = await new ApiService().post('admin/auth/login', { email, password }); // Adjust endpoint as needed
 
       // add accesstokenin cookie
       document.cookie = `accesstoken=${response.data.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}`;
       toast.success('Login successful!'); // Show success toast
- 
- 
 
-      router.push('/'); // Redirect on success
+
+
+      router.push('/');
     } catch (error) {
       toast(error.message || 'Login failed!'); // Show error toast
       console.log('Login error:', error);
-      
+
     } finally {
       setLoading(false);
     }
