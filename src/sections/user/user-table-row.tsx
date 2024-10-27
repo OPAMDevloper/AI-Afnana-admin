@@ -69,11 +69,22 @@ export function UserTableRow({ row, type, selected, onSelectRow, onDeleteRow, on
         </TableCell>
 
         <TableCell component="th" scope="row">
-          <Box gap={2} display="flex" alignItems="center">
-            <Avatar alt={row.name} src={'http://localhost:3000/' + row.profileImage || ''} />
+          {/* <Box gap={2} display="flex" alignItems="center">
+            <Avatar alt={row.name} src={import.meta.env.VITE_APP_BASE_URL + '/' + row.profileImage || ''} />
             <a onClick={() => router.push(`/profile/${row._id}`)} style={{ cursor: 'pointer' }}>
               {row.name}
             </a>
+          </Box> */}
+          <Box gap={2} display="flex" alignItems="center">
+            <Avatar alt={row.name} src={`${import.meta.env.VITE_APP_BASE_URL}/${row.profileImage || ''}`} />
+            <button
+              type="button" // Added type attribute
+              onClick={() => router.push(`/profile/${row._id}`)}
+              style={{ cursor: 'pointer', background: 'none', border: 'none', padding: 0, textAlign: 'left', color: 'inherit', font: 'inherit' }}
+              aria-label={`View profile of ${row.name}`} // Accessible label
+            >
+              {row.name}
+            </button>
           </Box>
         </TableCell>
 

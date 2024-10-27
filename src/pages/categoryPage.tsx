@@ -105,12 +105,6 @@ const CategoryManagement: React.FC = () => {
         }
     };
 
-    /*************  ✨ Codeium Command ⭐  *************/
-    /**
-     * Sets the category being edited and its name in the state for editing.
-     * @param category The category to be edited.
-     */
-    /******  bd1967f1-1f1a-44dd-a9ea-dfa3708aeef9  *******/
     const handleEditCategory = (category: Category) => {
         setEditingCategory(category);
         setCategoryName(category.name);

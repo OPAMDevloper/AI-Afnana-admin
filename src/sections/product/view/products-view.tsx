@@ -8,10 +8,8 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { CartIcon } from '../product-cart-widget';
 
 import type { FiltersProps } from '../product-filters';
-import { Card, TableBody } from '@mui/material';
+import { Card, TableBody, TableRow, TableCell } from '@mui/material';
 import { ProdcuttableToolbar } from '../product-table-toolbar';
-import { useTable } from 'src/sections/user/view';
-import { useRouter } from 'src/routes/hooks';
 import { ProductProps, ProductTableRow } from '../product-table-row';
 import ApiService from 'src/service/network_service';
 import { applyFilter, emptyRows, getComparator } from 'src/sections/product/utils';
@@ -23,6 +21,8 @@ import { TableEmptyRows } from 'src/sections/user/table-empty-rows';
 import { TableNoData } from 'src/sections/user/table-no-data';
 import { TablePagination } from '@mui/material';
 import { ProductTableHead } from '../product-table-head';
+import { useRouter } from 'src/routes/hooks';
+
 
 // ----------------------------------------------------------------------
 
@@ -66,11 +66,33 @@ const defaultFilters = {
   category: CATEGORY_OPTIONS[0].value,
 };
 
+interface PaginationData {
+  totalItems: number;
+  count: number;
+  page: number;
+  totalPages: number;
+  isNextPage: boolean;
+  isPrevPage: boolean;
+}
 export function ProductsView({ type = 'all' }) {
 
   const [sortBy, setSortBy] = useState('featured');
+  const router = useRouter();
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openFilter, setOpenFilter] = useState(false);
+
+  const [orderBy, setOrderBy] = useState('name');
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [paginationData, setPaginationData] = useState<PaginationData>({
+    totalItems: 0,
+    count: 0,
+    page: 1,
+    totalPages: 1,
+    isNextPage: false,
+    isPrevPage: false,
+  });
 
   const [filters, setFilters] = useState<FiltersProps>(defaultFilters);
 
@@ -95,57 +117,62 @@ export function ProductsView({ type = 'all' }) {
   );
 
 
-  const table = useTable();
+  const handleChangePage = (event: unknown, newPage: number) => {
+    console.log('event', event);
+
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const [filterName, setFilterName] = useState('');
   const [product, setProduct] = useState<ProductProps[]>([]);
   const [selectedRow, setSelectedRow] = useState<string[]>([]);
-  const router = useRouter();
-  ;
+
   useEffect(() => {
-    // Fetch user data from API
-    const fetchUsers = async () => {
+    const fetchProducts = async (pageNum: number, limit: number) => {
       try {
-        if (type === 'trash') {
-          const response = await new ApiService().get('admin/product/show/trash/all');
+        const endpoint = type === 'trash'
+          ? 'admin/product/show/trash/all'
+          : 'admin/product/all';
 
-          setProduct(response.data.data);
-        } else {
+        const params = new URLSearchParams({
+          page: (pageNum + 1).toString(),
+          count: limit.toString(),
+          // sort: `${order === 'desc' ? '-' : ''}${orderBy}`,
+          // search: filterName,
+        });
+        const response = await new ApiService().get(`${endpoint}?${params}`);
 
-          const response = await new ApiService().get('admin/product/all');
-          console.log('Response:', response);
+        setProduct(response.data.data);
+        setPaginationData({
+          totalItems: response.data.totalItems,
+          count: response.data.count,
+          page: response.data.page,
+          totalPages: response.data.totalPages,
+          isNextPage: response.data.isNextPage,
+          isPrevPage: response.data.isPrevPage,
+        });
 
-          setProduct(response.data.data);
-        }
       } catch (error) {
         console.error('Failed to fetch users:', error);
       }
     };
 
-    fetchUsers();
-  }, [type]);
-
-  const dataFiltered: ProductProps[] = applyFilter({
-    inputData: product,
-    comparator: getComparator(table.order, table.orderBy),
-    filterName,
-  });
-
-
-
-  const notFound = !dataFiltered.length && !!filterName;
-
-
+    fetchProducts(page, rowsPerPage);
+  }, [type, page, rowsPerPage, orderBy, order, filterName]);
 
   const handleDeleteUser = async (idss: string[]) => {
     try {
       const response = await new ApiService().delete(`admin/product/delete-many`, { ids: idss });
-      console.log('Response:', response);
 
       if (response.statusCode === 200) {
         toast.success('User deleted successfully');
         setProduct(product.filter((product) => !idss.includes(product._id)));
         setSelectedRow([]);
-        table.onResetPage();
       }
 
       // Optionally, refresh the user list or update the state
@@ -165,10 +192,8 @@ export function ProductsView({ type = 'all' }) {
         toast.success('User restored successfully');
         setProduct(product.filter((product) => !idss.includes(product._id)));
         setSelectedRow([]);
-        table.onResetPage();
       }
 
-      // Optionally, refresh the user list or update the state
     } catch (error) {
       console.error('Error restore user:', error);
       toast.error('Error deleting user:', error);
@@ -205,7 +230,7 @@ export function ProductsView({ type = 'all' }) {
 
       <Card>
         <ProdcuttableToolbar
-          numSelected={table.selected.length}
+          numSelected={selectedRow.length}
           filterName={filterName}
           idsList={selectedRow}
           type={type}
@@ -220,29 +245,21 @@ export function ProductsView({ type = 'all' }) {
           }}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
             setFilterName(event.target.value);
-            table.onResetPage();
           }}
         />
 
         <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
+          <TableContainer >
+            <Table sx={{ minWidth: 800, width: '100%', }} >
               <ProductTableHead
-                order={table.order}
-                orderBy={table.orderBy}
+                order={order}
+                orderBy={orderBy}
                 rowCount={product.length}
-                numSelected={table.selected.length}
-                onSort={table.onSort}
+                numSelected={selectedRow.length}
+                onSort={handleSort}
                 onSelectAllRows={(checked) => {
-                  if (checked) {
-                    setSelectedRow(product.map((user: any) => user._id));
-                  } else {
-                    setSelectedRow([]);
-                  }
-                  return table.onSelectAllRows(
-                    checked,
-                    product.map((user: any) => user._id)
-                  );
+                  const newSelected = checked ? product.map(item => item._id) : [];
+                  setSelectedRow(newSelected);
                 }
                 }
                 headLabel={[
@@ -255,82 +272,57 @@ export function ProductsView({ type = 'all' }) {
                   { id: 'options', label: 'Options' },
                 ]}
               />
-              <TableBody>
-                {dataFiltered
-                  .slice(
-                    table.page * table.rowsPerPage,
-                    table.page * table.rowsPerPage + table.rowsPerPage
-                  )
+
+
+              <TableBody  >
+                {product
                   .map((row: any) => (
                     <ProductTableRow
                       type={type}
                       key={row._id}
                       row={row}
-                      selected={table.selected.includes(row._id)}
+                      selected={selectedRow.includes(row._id)}
                       onSelectRow={() => {
-                        if (selectedRow.includes(row._id)) {
-                          setSelectedRow(selectedRow.filter((id) => id !== row._id));
-                        } else {
-                          setSelectedRow([...selectedRow, row._id]);
-                        }
-                        return table.onSelectRow(row._id);
+                        const newSelected = selectedRow.includes(row._id)
+                          ? selectedRow.filter(id => id !== row._id)
+                          : [...selectedRow, row._id];
+                        setSelectedRow(newSelected);
                       }}
-                      onDeleteRow={(id) => {
-
-                        setSelectedRow((prevSelectedRow) => {
-
-                          const updatedSelectedRow = [id];
-                          handleDeleteUser(updatedSelectedRow); // Pass updated state if needed 
-
-                          return updatedSelectedRow;
-                        })
-                      }}
-                      onEditRow={(id) => {
-
-                        router.push(`/product/${id}/edit`);
-                      }}
-                      onRestoreRow={(id) => {
-                        setSelectedRow((prevSelectedRow) => {
-                          const updatedSelectedRow = [id];
-                          handleRestoreUser(updatedSelectedRow);
-                          return updatedSelectedRow;
-                        })
-                      }}
-                      onTrashRow={(id) => {
-
-
-                        setSelectedRow((prevSelectedRow) => {
-                          const updatedSelectedRow = [id];
-                          handleTrashUser(updatedSelectedRow);
-                          return updatedSelectedRow;
-                        });
-                      }}
+                      onDeleteRow={() => handleDeleteUser([row._id])}
+                      onRestoreRow={() => handleRestoreUser([row._id])}
+                      onTrashRow={() => handleTrashUser([row._id])}
+                      onEditRow={(id) => router.push(`/product/${id}/edit`)}
                     />
                   ))}
 
-                <TableEmptyRows
-                  height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, product.length)}
-                />
-
-                {notFound && <TableNoData searchQuery={filterName} />}
+                {product.length === 0 && (
+                  // <TableRow sx={{ width: 500, display: 'flex', justifyContent: 'center', alignItems: 'center' }}   >
+                  //   <TableCell colSpan={6}>
+                  <TableNoData searchQuery={type === 'trash' ? 'Trash products' : 'Products'} />
+                  //   </TableCell>
+                  // </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
         </Scrollbar>
 
+
         <TablePagination
           component="div"
-          page={table.page}
-          count={product.length}
-          rowsPerPage={table.rowsPerPage}
-          onPageChange={table.onChangePage}
+          page={page}
+          count={paginationData.totalItems}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          // labelRowsPerPage="Rows per page:"
+          // labelDisplayedRows={({ from, to, count }) => `${from}-${to} of ${count}`}
           rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={table.onChangeRowsPerPage}
-        />
+        >
+        </TablePagination>
       </Card>
 
 
-    </DashboardContent>
+    </DashboardContent >
   );
 }

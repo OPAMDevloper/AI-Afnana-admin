@@ -17,7 +17,7 @@ export default function Page() {
             </Helmet>
 
             {/* <UserView type="all" /> */}
-            < UserAddEdit />
+            < UserAddEdit  onupdate={() => { }}/>
 
         </>
     );

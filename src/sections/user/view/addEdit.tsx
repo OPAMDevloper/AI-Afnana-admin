@@ -18,14 +18,10 @@ import {
     Radio,
 } from '@mui/material';
 import { toast } from 'react-toastify';
-import { Helmet } from 'react-helmet-async';
-import { CONFIG } from 'src/config-global';
-import { DashboardContent } from 'src/layouts/dashboard';
-import { Iconify } from 'src/components/iconify';
 import ApiService from 'src/service/network_service';
-import ProfileSidebar from '../view/profileSidebar'; // Import the sidebar
 
-const UserAddEdit = () => {
+
+const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
     const { id } = useParams();
 
     const [userDetails, setUserDetails] = useState<{
@@ -107,9 +103,11 @@ const UserAddEdit = () => {
 
         try {
             const response = await new ApiService().post(url, formData);
-            if (response.statusCode === 201) {
-                toast.success('User saved successfully');
+            if (response.statusCode === 200) {
+                toast.success('User update successfully');
+                onupdate(response.data);
             }
+
         } catch (error) {
             toast.error(error.message || 'Failed to submit form');
             console.error('Error submitting form:', error.message);
@@ -126,7 +124,6 @@ const UserAddEdit = () => {
                     New User
                 </Button>
             </Box>
-
             <Card sx={{ p: 3 }}>
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
@@ -140,7 +137,6 @@ const UserAddEdit = () => {
                                 required
                             />
                         </Grid>
-
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
@@ -177,6 +173,8 @@ const UserAddEdit = () => {
                                 >
                                     <FormControlLabel value="active" control={<Radio />} label="Active" />
                                     <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
+                                    <FormControlLabel value="blocked" control={<Radio />} label="Blocked" />
+
                                 </RadioGroup>
                             </FormControl>
                         </Grid>
@@ -193,6 +191,31 @@ const UserAddEdit = () => {
                             />
                         </Grid>
 
+
+
+                        <Grid item xs={12} display="flex" alignItems="center">
+                            {preview ? (
+                                // <Avatar
+                                //     alt="Profile Picture"
+                                //     src={preview}
+                                //     sx={{ width: 56, height: 56, mr: 2 }}
+                                // /> 
+                                <Box
+                                    component="img"
+                                    sx={{
+                                        height: 150,
+                                        width: 180,
+                                    }}
+                                    alt="The house from the offer."
+                                    src={preview ? `${import.meta.env.VITE_APP_BASE_URL}/${preview}` : 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930'}
+                                />
+
+                            ) : (
+                                <Typography variant="body2" color="text.secondary">
+                                    No image uploaded
+                                </Typography>
+                            )}
+                        </Grid>
                         <Grid item xs={12}>
                             <input
                                 accept="image/*"
@@ -209,20 +232,6 @@ const UserAddEdit = () => {
                                     Upload Profile Picture
                                 </Button>
                             </label>
-                        </Grid>
-
-                        <Grid item xs={12} display="flex" alignItems="center">
-                            {preview ? (
-                                <Avatar
-                                    alt="Profile Picture"
-                                    src={preview}
-                                    sx={{ width: 56, height: 56, mr: 2 }}
-                                />
-                            ) : (
-                                <Typography variant="body2" color="text.secondary">
-                                    No image uploaded
-                                </Typography>
-                            )}
                         </Grid>
 
                         <Grid item xs={12}>

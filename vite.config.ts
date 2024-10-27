@@ -51,14 +51,14 @@ import react from '@vitejs/plugin-react-swc';
 const PORT = 3039;
 
 export default defineConfig({
+  define: {
+    'import.meta.env.BASE_URL': JSON.stringify(process.env.VITE_APP_BASE_URL)
+  },
   plugins: [
     react(),
     checker({
       typescript: true,
-      eslint: {
-        lintCommand: 'eslint "./src/**/*.{js,jsx,ts,tsx}"',
-        dev: { logLevel: ['error'] },
-      },
+      
       overlay: {
         position: 'tl',
         initialIsOpen: false,
@@ -67,14 +67,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: [
-      {
-        find: '@mui/material',
-        replacement: '@mui/material',
-      },
-      {
-        find: '@mui/icons-material',
-        replacement: '@mui/icons-material',
-      },
+
       {
         find: /^~(.+)/,
         replacement: path.join(process.cwd(), 'node_modules/$1'),

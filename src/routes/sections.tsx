@@ -9,6 +9,7 @@ import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import ProfileSidebar from 'src/sections/user/view/profileSidebar';
 import CategoryManagement from 'src/pages/categoryPage';
+import { OrderView } from 'src/sections/orders/view/order-view';
 
 // ----------------------------------------------------------------------
 
@@ -64,6 +65,10 @@ export function Router() {
           element: <AddEditUserPage />,
         },
         {
+          path: 'orders',
+          element: <OrderView />
+        },
+        {
           path: 'profile/:id',
           element: <ProfileSidebar />,
         },
@@ -71,6 +76,7 @@ export function Router() {
 
       ],
     },
+
 
     {
       path: 'sign-in',

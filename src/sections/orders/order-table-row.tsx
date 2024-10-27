@@ -70,7 +70,7 @@ export function OrderTableRow({ row, type, selected, onSelectRow, onDeleteRow, o
 
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
-            <Avatar alt={row.name} src={'http://localhost:3000/' + row.profileImage || ''} />
+            <Avatar alt={row.name} src={import.meta.env.VITE_APP_BASE_URL + '/' + row.profileImage || ''} />
             <a onClick={() => router.push(`/profile/${row._id}`)} style={{ cursor: 'pointer' }}>
               {row.name}
             </a>

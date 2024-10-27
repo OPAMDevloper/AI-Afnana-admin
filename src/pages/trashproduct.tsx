@@ -13,7 +13,7 @@ export default function Page() {
                 <title> {`Products - ${CONFIG.appName}`}</title>
             </Helmet>
 
-            <ProductsView />
+            <ProductsView type='trash' />
         </>
     );
 }

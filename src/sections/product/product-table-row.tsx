@@ -70,7 +70,7 @@ export function ProductTableRow({ row, type, selected, onSelectRow, onDeleteRow,
 
                 <TableCell component="th" scope="row">
                     <Box gap={2} display="flex" alignItems="center">
-                        <Avatar alt={row.name} src={'http://localhost:3000/' + row.image || ''} />
+                        <Avatar alt={row.name} src={import.meta.env.VITE_APP_BASE_URL + '/' + row.image || ''} />
                         <a onClick={() => router.push(`/product/${row._id}/edit`)} style={{ cursor: 'pointer' }}>
                             {row.name}
                         </a>

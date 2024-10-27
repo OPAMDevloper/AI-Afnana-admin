@@ -92,7 +92,8 @@ class ApiService {
   baseURL: string;
 
   constructor() {
-    this.baseURL = import.meta.env.REACT_APP_API_BASE_URL || 'http://localhost:3000/';
+    this.baseURL = import.meta.env.VITE_APP_BASE_URL ? `${import.meta.env.VITE_APP_BASE_URL}/` : 'http://localhost:3001/';
+
   }
 
   // Change to a static method

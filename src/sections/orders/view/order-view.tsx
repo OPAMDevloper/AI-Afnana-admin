@@ -22,22 +22,42 @@ import { OrderTableToolbar } from '../order-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../untils';
 import type { OrdersProps } from '../order-table-row';
 
+
+
+interface PaginationData {
+    totalItems: number;
+    count: number;
+    page: number;
+    totalPages: number;
+    isNextPage: boolean;
+    isPrevPage: boolean;
+}
+
 export function OrderView() {
-    const table = useTable();
     const [filterName, setFilterName] = useState('');
     const [orders, setOrders] = useState<OrdersProps[]>([]);
+
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [selectedRow, setSelectedRow] = useState<string[]>([]);
     const router = useRouter();
 
+    const [paginationData, setPaginationData] = useState<PaginationData>({
+        totalItems: 0,
+        count: 0,
+        page: 1,
+        totalPages: 1,
+        isNextPage: false,
+        isPrevPage: false,
+    });
+    const [orderBy, setOrderBy] = useState('name');
+    const [order, setOrder] = useState<'asc' | 'desc'>('asc');
     useEffect(() => {
         // Fetch user data from API
         const fetchOrders = async () => {
             try {
                 const response = await new ApiService().get('admin/orders/all');
-
                 setOrders(response.data.data);
-
-
             } catch (error) {
                 console.error('Failed to fetch users:', error);
             }
@@ -46,38 +66,29 @@ export function OrderView() {
         fetchOrders();
     }, []);
 
-    const dataFiltered: OrdersProps[] = applyFilter({
-        inputData: orders,
-        comparator: getComparator(table.order, table.orderBy),
-        filterName,
-    });
+
+    const handleSort = (id: string) => {
+        const isAsc = orderBy === id && order === 'asc';
+        setOrder(isAsc ? 'desc' : 'asc');
+        setOrderBy(id);
+        setPage(0); // Reset to first page when sorting changes
+    }
 
 
 
-    const notFound = !dataFiltered.length && !!filterName;
+    const handleChangePage = (event: unknown, newPage: number) => {
+        setPage(newPage);
+    };
 
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
 
-
-    // const handleDeleteOrder = async (idss: string[]) => {
-    //     try {
-    //         const response = await new ApiService().delete(`admin/orders/delete-many`, { ids: idss });
-    //         console.log('Response:', response);
-
-    //         if (response.statusCode === 200) {
-    //             toast.success('User deleted successfully');
-    //             setOrders(orders.filter((order) => !idss.includes(order._id)));
-    //             setSelectedRow([]);
-    //             table.onResetPage();
-    //         }
-
-    //         // Optionally, refresh the user list or update the state
-    //     } catch (error) { 
-    //         toast.error('Error deleting order:', error);
-    //     }
-    // }
-
-
-
+    const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFilterName(event.target.value);
+        setPage(0);
+    };
 
 
 
@@ -98,44 +109,35 @@ export function OrderView() {
 
             <Card>
                 <OrderTableToolbar
-                    numSelected={table.selected.length}
+                    numSelected={selectedRow.length}
                     filterName={filterName}
                     idsList={selectedRow}
                     type={'All'}
-                    onDeleteRow={(ids: string[]) => {
-                        // handleDeleteUser(ids);
+                    onFilterName={handleFilterName}
+                    onDeleteRow={() => {
+
                     }}
-                    onRestoreRow={(ids: string[]) => {
-                        // handleRestoreUser(ids);
+                    onRestoreRow={() => {
+
                     }}
-                    onTrashRow={(ids: string[]) => {
-                        // handleTrashUser(ids);
+                    onTrashRow={() => {
+
                     }}
-                    onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        setFilterName(event.target.value);
-                        table.onResetPage();
-                    }}
+
                 />
 
                 <Scrollbar>
                     <TableContainer sx={{ overflow: 'unset' }}>
                         <Table sx={{ minWidth: 800 }}>
                             <OrderTableHead
-                                order={table.order}
-                                orderBy={table.orderBy}
+                                order={order}
+                                orderBy={orderBy}
                                 rowCount={orders.length}
-                                numSelected={table.selected.length}
-                                onSort={table.onSort}
+                                numSelected={selectedRow.length}
+                                onSort={handleSort}
                                 onSelectAllRows={(checked) => {
-                                    if (checked) {
-                                        setSelectedRow(orders.map((user: any) => user._id));
-                                    } else {
-                                        setSelectedRow([]);
-                                    }
-                                    return table.onSelectAllRows(
-                                        checked,
-                                        orders.map((user: any) => user._id)
-                                    );
+                                    const newSelected = checked ? orders.map(order => order._id) : [];
+                                    setSelectedRow(newSelected);
                                 }
                                 }
                                 headLabel={[
@@ -150,64 +152,38 @@ export function OrderView() {
                                 ]}
                             />
                             <TableBody>
-                                {dataFiltered
-                                    .slice(
-                                        table.page * table.rowsPerPage,
-                                        table.page * table.rowsPerPage + table.rowsPerPage
-                                    )
+                                {orders
                                     .map((row: any) => (
                                         <OrderTableRow
                                             type={'All'}
                                             key={row._id}
                                             row={row}
-                                            selected={table.selected.includes(row._id)}
+                                            selected={selectedRow.includes(row._id)}
                                             onSelectRow={() => {
-                                                if (selectedRow.includes(row._id)) {
-                                                    setSelectedRow(selectedRow.filter((id) => id !== row._id));
-                                                } else {
-                                                    setSelectedRow([...selectedRow, row._id]);
-                                                }
-                                                return table.onSelectRow(row._id);
+                                                const newSelected = selectedRow.includes(row._id)
+                                                    ? selectedRow.filter(id => id !== row._id)
+                                                    : [...selectedRow, row._id];
+                                                setSelectedRow(newSelected);
                                             }}
-                                            onDeleteRow={(id) => {
+                                            onDeleteRow={() => {
 
-                                                setSelectedRow((prevSelectedRow) => {
-
-                                                    const updatedSelectedRow = [id];
-                                                    (updatedSelectedRow); // Pass updated state if needed 
-
-                                                    return updatedSelectedRow;
-                                                })
                                             }}
-                                            onEditRow={(id) => {
+                                            onRestoreRow={() => {
 
-                                                router.push(`/user/${id}/edit`);
                                             }}
-                                            onRestoreRow={(id) => {
-                                                setSelectedRow((prevSelectedRow) => {
-                                                    const updatedSelectedRow = [id];
-                                                    // handleRestoreUser(updatedSelectedRow);
-                                                    return updatedSelectedRow;
-                                                })
-                                            }}
-                                            onTrashRow={(id) => {
+                                            onTrashRow={() => {
 
-
-                                                setSelectedRow((prevSelectedRow) => {
-                                                    const updatedSelectedRow = [id];
-                                                    // handleTrashUser(updatedSelectedRow);
-                                                    return updatedSelectedRow;
-                                                });
                                             }}
+                                            onEditRow={() => router.push(`/order/details/${row._id}`)}
                                         />
                                     ))}
 
-                                <TableEmptyRows
-                                    height={68}
-                                    emptyRows={emptyRows(table.page, table.rowsPerPage, orders.length)}
-                                />
 
-                                {notFound && <TableNoData searchQuery={filterName} />}
+                                {orders.length === 0 && (
+                                    <TableNoData searchQuery={'orders'} />
+
+                                )}
+
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -215,82 +191,21 @@ export function OrderView() {
 
                 <TablePagination
                     component="div"
-                    page={table.page}
-                    count={orders.length}
-                    rowsPerPage={table.rowsPerPage}
-                    onPageChange={table.onChangePage}
+                    page={page}
+                    count={paginationData.totalItems}
+                    rowsPerPage={rowsPerPage}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    labelRowsPerPage="Rows per page:"
+                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} of ${count}`}
                     rowsPerPageOptions={[5, 10, 25]}
-                    onRowsPerPageChange={table.onChangeRowsPerPage}
-                />
+
+                // onRowsPerPageChange={handleChangeRowsPerPage}
+                >
+                </TablePagination>
             </Card>
         </DashboardContent>
     );
 }
 
 // ----------------------------------------------------------------------
-
-export function useTable() {
-    const [page, setPage] = useState(0);
-    const [orderBy, setOrderBy] = useState('name'); // Change to a field that exists in your data
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [selected, setSelected] = useState<string[]>([]);
-    const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-
-    const onSort = useCallback(
-        (id: string) => {
-            const isAsc = orderBy === id && order === 'asc';
-            setOrder(isAsc ? 'desc' : 'asc');
-            setOrderBy(id);
-        },
-        [order, orderBy]
-    );
-
-    const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
-        if (checked) {
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    }, []);
-
-    const onSelectRow = useCallback(
-        (inputValue: string) => {
-            const newSelected = selected.includes(inputValue)
-                ? selected.filter((value) => value !== inputValue)
-                : [...selected, inputValue];
-
-            setSelected(newSelected);
-        },
-        [selected]
-    );
-
-    const onResetPage = useCallback(() => {
-        setPage(0);
-    }, []);
-
-    const onChangePage = useCallback((event: unknown, newPage: number) => {
-        setPage(newPage);
-    }, []);
-
-    const onChangeRowsPerPage = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            setRowsPerPage(parseInt(event.target.value, 10));
-            onResetPage();
-        },
-        [onResetPage]
-    );
-
-    return {
-        page,
-        order,
-        onSort,
-        orderBy,
-        selected,
-        rowsPerPage,
-        onSelectRow,
-        onResetPage,
-        onChangePage,
-        onSelectAllRows,
-        onChangeRowsPerPage,
-    };
-}

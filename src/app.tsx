@@ -13,6 +13,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 
 
+
+
 // ----------------------------------------------------------------------
 
 export default function App() {
@@ -42,7 +44,7 @@ export default function App() {
     <ThemeProvider >
 
       <Router />
-      <ToastContainer  />
+      <ToastContainer />
       {/* {githubButton} */}
     </ThemeProvider>
   );
