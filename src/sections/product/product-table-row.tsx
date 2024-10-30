@@ -24,6 +24,7 @@ export type ProductProps = {
     quantity: string;
     image: string;
     price: string;
+    category: any;
     createdAt: string;
 };
 
@@ -77,7 +78,7 @@ export function ProductTableRow({ row, type, selected, onSelectRow, onDeleteRow,
                     </Box>
                 </TableCell>
 
-                <TableCell>not implemented</TableCell>
+                <TableCell>{row.category != null ? row.category?.name : '-'}</TableCell>
                 <TableCell>{row.price}</TableCell>
                 <TableCell>{row.quantity}</TableCell>
 

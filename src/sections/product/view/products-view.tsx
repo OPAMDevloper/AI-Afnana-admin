@@ -143,9 +143,10 @@ export function ProductsView({ type = 'all' }) {
           page: (pageNum + 1).toString(),
           count: limit.toString(),
           // sort: `${order === 'desc' ? '-' : ''}${orderBy}`,
-          // search: filterName,
         });
-        const response = await new ApiService().get(`${endpoint}?${params}`);
+
+        const search = filterName ? `&search=${filterName}` : '';
+        const response = await new ApiService().get(`${endpoint}?${params}${search}`);
 
         setProduct(response.data.data);
         setPaginationData({
@@ -200,6 +201,11 @@ export function ProductsView({ type = 'all' }) {
     }
   }
 
+  const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterName(event.target.value);
+    setPage(0);
+
+  };
   const handleTrashUser = async (idss: string[]) => {
     try {
 
@@ -243,8 +249,8 @@ export function ProductsView({ type = 'all' }) {
           onTrashRow={(ids: string[]) => {
             handleTrashUser(ids);
           }}
-          onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setFilterName(event.target.value);
+          onFilterName={( data) => {
+            handleFilterName(data);
           }}
         />
 
@@ -291,7 +297,7 @@ export function ProductsView({ type = 'all' }) {
                       onDeleteRow={() => handleDeleteUser([row._id])}
                       onRestoreRow={() => handleRestoreUser([row._id])}
                       onTrashRow={() => handleTrashUser([row._id])}
-                      onEditRow={(id) => router.push(`/product/${id}/edit`)}
+                      onEditRow={(id: any) => router.push(`/product/${id}/edit`)}
                     />
                   ))}
 

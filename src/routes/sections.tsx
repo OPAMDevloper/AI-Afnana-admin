@@ -19,6 +19,11 @@ export const UserPage = lazy(() => import('src/pages/user'));
 const AddEditUserPage = React.lazy(() => import('src/pages/userAddEdit'));
 const profileSidebar = React.lazy(() => import('src/sections/user/view/profileSidebar'));
 export const TrashUserPage = lazy(() => import('src/pages/trashuser'));
+export const Blogs = lazy(() => import('src/pages/blogs'));
+export const TrashBlogs = lazy(() => import('src/pages/trashBlogs'));
+export const AddEditBlogs = lazy(() => import('src/pages/addEditBLogs'));
+
+
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 const TrashProductPage = lazy(() => import('src/pages/trashproduct'));
@@ -59,7 +64,12 @@ export function Router() {
         { path: 'product/:id/edit', element: <AddEditProductPage /> },
         { path: 'trash-product', element: <TrashProductPage />, },
         { path: 'category', element: <CategoryManagement /> },
-        { path: 'blog', element: <BlogPage /> },
+        // { path: 'blog', element: <Blogs /> },
+        { path: 'blogs', element: <Blogs /> },
+        { path: 'add-blogs', element: <AddEditBlogs /> },
+        { path: 'blog/:id/edit', element: <AddEditBlogs /> },
+        { path: 'trash-blogs', element: <TrashBlogs /> },
+
         {
           path: 'user/:id/edit',
           element: <AddEditUserPage />,

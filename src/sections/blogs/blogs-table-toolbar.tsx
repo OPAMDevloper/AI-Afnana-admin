@@ -12,7 +12,7 @@ import ApiService from 'src/service/network_service';
 
 // ----------------------------------------------------------------------
 
-type UserTableToolbarProps = {
+type BlogsTableToolbarProps = {
   numSelected: number;
   filterName: string;
   onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -31,8 +31,8 @@ type UserTableToolbarProps = {
 
 
 
-export function UserTableToolbar({ numSelected, filterName, onFilterName, type, idsList, onDeleteRow, onRestoreRow, onTrashRow }: UserTableToolbarProps) {
-
+export function BlogsTableToolbar({ numSelected, filterName, onFilterName, type , idsList  , onDeleteRow, onRestoreRow, onTrashRow }: BlogsTableToolbarProps) {
+ 
 
 
   return (
@@ -70,20 +70,20 @@ export function UserTableToolbar({ numSelected, filterName, onFilterName, type, 
       {numSelected > 0 ? (
         type === "trash" ? (
           <>
+           
+           <div>
+            <Tooltip title="Deete">
+              <IconButton onClick={() => onRestoreRow(idsList)}>
+               
+              <Iconify icon="mdi:restore" />
+              </IconButton>
+            </Tooltip>
 
-            <div>
-              <Tooltip title="Deete">
-                <IconButton onClick={() => onRestoreRow(idsList)}>
-
-                  <Iconify icon="mdi:restore" />
-                </IconButton>
-              </Tooltip>
-
-              <Tooltip title="Restore">
-                <IconButton onClick={() => onDeleteRow(idsList)}>
-                  <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
-              </Tooltip>
+            <Tooltip title="Restore">
+              <IconButton onClick={() => onDeleteRow(idsList)}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            </Tooltip>
             </div>
           </>
         ) : (

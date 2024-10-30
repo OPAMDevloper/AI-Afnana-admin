@@ -1,8 +1,12 @@
-import { Icon } from '@iconify/react';
-import { Icons } from 'react-toastify';
-import { Iconify } from 'src/components/iconify';
 import { Label } from 'src/components/label';
 import { SvgColor } from 'src/components/svg-color';
+
+import { Icon } from '@mui/material';
+
+// import { Article } from '@mui/icons-material';
+import { icons } from 'lucide-react';
+
+
 
 // ----------------------------------------------------------------------
 
@@ -50,26 +54,28 @@ export const navData = [
   {
     title: 'Category',
     path: '/category',
-    icon: icon('ic-category'),
+    icon: icon('category'),
   },
   {
     title: "Order",
     path: '/orders',
     icon: icon('ic-order')
+  },
+  {
+    title: "Blogs",
+    path: 'blogs',
+    icon: icon('ic-blog')
+  },
+  {
+    title: "Add Blogs",
+    path: 'add-blogs',
+    icon: icon('ic-blog')
+  },
+  {
+    title: "Trash Blogs",
+    path: 'trash-blogs',
+    icon: icon('ic-blog')
   }
-  // {
-  //   title: 'Blog',
-  //   path: '/blog',
-  //   icon: icon('ic-blog'),
-  // },
-  // {
-  //   title: 'Sign in',
-  //   path: '/sign-in',
-  //   icon: icon('ic-lock'),
-  // },
-  // {
-  //   title: 'Not found',
-  //   path: '/404',
-  //   icon: icon('ic-disabled'),
-  // },
+
+
 ];

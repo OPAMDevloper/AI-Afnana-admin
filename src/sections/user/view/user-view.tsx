@@ -388,9 +388,12 @@ export function UserView({ type }: { type: string }) {
 
   const fetchUsers = async (pageNum: number, limit: number) => {
     try {
-      const endpoint = type === 'trash'
+      var endpoint = type === 'trash'
         ? 'admin/customer/show/trash/all'
         : 'admin/customer/all';
+
+
+
 
       const params = new URLSearchParams({
         page: (pageNum + 1).toString(),
@@ -399,7 +402,10 @@ export function UserView({ type }: { type: string }) {
         // search: filterName,
       });
 
-      const response = await new ApiService().get(`${endpoint}?${params}`);
+
+      const search = filterName ? `&search=${filterName}` : '';
+
+      const response = await new ApiService().get(`${endpoint}?${params}${search}`);
 
       setUsers(response.data.data);
       setPaginationData({
@@ -439,6 +445,7 @@ export function UserView({ type }: { type: string }) {
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterName(event.target.value);
     setPage(0);
+
   };
 
   const handleDeleteUser = async (ids: string[]) => {
@@ -509,7 +516,10 @@ export function UserView({ type }: { type: string }) {
           onDeleteRow={handleDeleteUser}
           onRestoreRow={handleRestoreUser}
           onTrashRow={handleTrashUser}
-          onFilterName={handleFilterName}
+          onFilterName={(data) => {
+            console.log('filterName $filtername', data)
+            handleFilterName(data);
+          }}
         />
 
         <Scrollbar>
