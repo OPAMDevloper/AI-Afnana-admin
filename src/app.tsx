@@ -20,7 +20,7 @@ import 'react-toastify/dist/ReactToastify.css'
 export default function App() {
   useScrollToTop();
 
-  // const githubButton = (
+// const githubButton = (
   //   <Fab
   //     size="medium"
   //     aria-label="Github"

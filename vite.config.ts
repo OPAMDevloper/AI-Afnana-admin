@@ -89,7 +89,7 @@ export default defineConfig({
     host: process.env.VITE_APP_HOST || 'localhost'
   },
   preview: {
-    port: Number(process.env.VITE_APP_PORT) || 3005,
+    port: Number(process.env.VITE_APP_PORT) || 3004,
     host: process.env.VITE_APP_HOST || 'localhost'
   },
 });
