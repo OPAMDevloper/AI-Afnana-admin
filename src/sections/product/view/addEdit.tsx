@@ -19,6 +19,7 @@ import {
     Select,
     MenuItem,
     InputLabel,
+    FormGroup,
 } from '@mui/material';
 import { Iconify } from 'src/components/iconify';
 import ApiService from 'src/service/network_service';
@@ -29,6 +30,7 @@ import { useRouter } from 'src/routes/hooks';
 import { Icon } from '@iconify/react';
 import { DeleteIcon, UploadIcon } from 'lucide-react';
 import { Divider } from '@mui/material';
+import { Checkbox } from '@mui/material';
 
 // Define the shape of product details
 interface ProductDetails {
@@ -36,6 +38,7 @@ interface ProductDetails {
     description: string;
     price: number;
     discountPrice: number;
+    isFeatured: boolean;
     quantity: number;
     status: 'active' | 'inactive';
     image: File | null;
@@ -61,6 +64,7 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
         discountPrice: 0,
         quantity: 0,
         status: 'active',
+        isFeatured: false,
         image: null,
         gallery: [],
         category: '', // Initialize category
@@ -68,6 +72,16 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [previewGallery, setPreviewGallery] = useState<string[]>([]);
     const [categories, setCategories] = useState<Category[]>([]); // State for categories
+
+
+
+    useEffect(() => {
+        return () => {
+            if (previewImage) {
+                URL.revokeObjectURL(previewImage);
+            }
+        };
+    }, [previewImage]);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -119,11 +133,22 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
         setProductDetails((prevDetails) => ({ ...prevDetails, category: event.target.value }));
     };
 
+    // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = e.target.files?.[0];
+    //     if (file) {
+    //         setProductDetails((prevDetails) => ({ ...prevDetails, image: file }));
+    //         setPreviewImage(URL.createObjectURL(file));
+    //     }
+    // };
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            console.log("File selected:", file);
             setProductDetails((prevDetails) => ({ ...prevDetails, image: file }));
-            setPreviewImage(URL.createObjectURL(file));
+            const objectURL = URL.createObjectURL(file);
+            console.log("Object URL created:", objectURL);
+            setPreviewImage(objectURL);
         }
     };
 
@@ -168,194 +193,6 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
         }
     };
 
-    //     return (
-    //         <Box sx={{ maxWidth: '100%', margin: 'auto', p: 3 }}>
-    //             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-    //                 <Typography variant="h4" component="h1">
-    //                     {isEdit ? 'Edit Product' : 'Add Product'}
-    //                 </Typography>
-    //                 <Button variant="contained">
-    //                     New Product
-    //                 </Button>
-    //             </Box>
-
-    //             <Card sx={{ p: 3 }}>
-    //                 <form onSubmit={handleSubmit}>
-    //                     <Grid container spacing={3}>
-    //                         <Grid item xs={12}>
-    //                             <TextField
-    //                                 fullWidth
-    //                                 label="Product Name"
-    //                                 name="name"
-    //                                 value={productDetails.name}
-    //                                 onChange={handleChange}
-    //                                 required
-    //                             />
-    //                         </Grid>
-
-    //                         <Grid item xs={12}>
-    //                             <TextField
-    //                                 fullWidth
-    //                                 label="Description"
-    //                                 name="description"
-    //                                 value={productDetails.description}
-    //                                 onChange={handleChange}
-    //                                 multiline
-    //                                 rows={4}
-    //                                 required
-    //                             />
-    //                         </Grid>
-
-    //                         <Grid item xs={12} sm={6}>
-    //                             <TextField
-    //                                 fullWidth
-    //                                 label="Price"
-    //                                 name="price"
-    //                                 type="number"
-    //                                 value={productDetails.price}
-    //                                 onChange={handleChange}
-    //                                 InputProps={{ inputProps: { min: 0, step: 0.01 } }}
-    //                                 required
-    //                             />
-    //                         </Grid>
-
-    //                         <Grid item xs={12} sm={6}>
-    //                             <TextField
-    //                                 fullWidth
-    //                                 label="Discount Price"
-    //                                 name="discountPrice"
-    //                                 type="number"
-    //                                 value={productDetails.discountPrice}
-    //                                 onChange={handleChange}
-    //                                 InputProps={{ inputProps: { min: 0, step: 0.01 } }}
-    //                             />
-    //                         </Grid>
-
-    //                         <Grid item xs={12} sm={6}>
-    //                             <TextField
-    //                                 fullWidth
-    //                                 label="Quantity"
-    //                                 name="quantity"
-    //                                 type="number"
-    //                                 value={productDetails.quantity}
-    //                                 onChange={handleChange}
-    //                                 InputProps={{ inputProps: { min: 0 } }}
-    //                                 required
-    //                             />
-    //                         </Grid>
-
-    //                         <Grid item xs={12} sm={6} >
-    //                             <FormControl component="fieldset">
-    //                                 <FormLabel component="legend">Status</FormLabel>
-    //                                 <RadioGroup
-    //                                     row
-    //                                     name="status"
-    //                                     value={productDetails.status}
-    //                                     onChange={handleChange}
-    //                                 >
-    //                                     <FormControlLabel value="active" control={<Radio />} label="Active" />
-    //                                     <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
-    //                                 </RadioGroup>
-    //                             </FormControl>
-    //                         </Grid>
-
-    //                         {/* Dropdown for Category */}
-    //                         <Grid item xs={12} sm={6}>
-    //                             <FormControl fullWidth>
-    //                                 <InputLabel id="category-label">Category</InputLabel>
-    //                                 <Select
-    //                                     labelId="category-label"
-    //                                     name="category"
-    //                                     value={productDetails.category}
-    //                                     onChange={handleSelectChange}
-    //                                     required
-    //                                 >
-    //                                     {categories.map(category => (
-    //                                         <MenuItem key={category._id} value={category._id}>
-    //                                             {category.name}
-    //                                         </MenuItem>
-    //                                     ))}
-    //                                 </Select>
-    //                             </FormControl>
-    //                         </Grid>
-
-    //                         <Grid item xs={12} className="image-uploader">
-    //                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center-rigth', p: 3 }}>
-    //                                 {previewImage && (
-    //                                     <Box component="img" src={previewImage ?? 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930'} alt="Product preview" sx={{ width: 100, height: 100, objectFit: 'cover', mt: 2, borderRadius: 1 }} />
-    //                                 )}
-    //                                 <input
-    //                                     accept="image/*"
-    //                                     style={{ display: 'none' }}
-    //                                     id="main-image-upload"
-    //                                     type="file"
-    //                                     onChange={handleImageChange}
-    //                                 />
-
-    //                                 <label htmlFor="main-image-upload">
-    //                                     <Button
-    //                                         // make good looking image button for image
-    //                                         variant="contained"
-    //                                         component="span"
-    //                                         sx={{ width: '100', height: '50', mt: 3 }}
-    //                                         disabled={false}
-    //                                         color='primary'
-    //                                     >
-    //                                         Upload Main Image
-    //                                     </Button>
-    //                                 </label>
-    //                             </Box>
-
-    //                         </Grid>
-
-    //                         <Grid item xs={12}>
-    //                             <input
-    //                                 accept="image/*"
-    //                                 style={{ display: 'none' }}
-    //                                 id="gallery-upload"
-    //                                 type="file"
-    //                                 multiple
-    //                                 onChange={handleGalleryChange}
-    //                             />
-    //                             <label htmlFor="gallery-upload">
-    //                                 <Button
-    //                                     variant="contained"
-    //                                     component="span"
-    //                                 >
-    //                                     Upload Gallery Images
-    //                                 </Button>
-    //                             </label>
-    //                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
-    //                                 {previewGallery.map((preview, index) => (
-    //                                     <Box
-    //                                         key={index}
-    //                                         component="img"
-    //                                         src={preview}
-    //                                         alt={`Gallery ${index + 1}`}
-    //                                         sx={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 1 }}
-    //                                     />
-    //                                 ))}
-    //                             </Box>
-    //                         </Grid>
-
-    //                         <Grid item xs={12}>
-    //                             <Button
-    //                                 type="submit"
-    //                                 variant="contained"
-    //                                 color="primary"
-    //                                 startIcon={<Iconify icon="mingcute:add-line" />}
-    //                                 sx={{ mr: 3, width: '80%', alignItems: 'center' }}
-    //                                 size="large"
-    //                             >
-    //                                 {isEdit ? 'Update Product' : 'Add Product'}
-    //                             </Button>
-    //                         </Grid>
-    //                     </Grid>
-    //                 </form>
-    //             </Card>
-    //         </Box >
-    //     );
-    // };
 
     const handleRemoveGalleryImage = (index: any) => {
         const newGallery = [...previewGallery];
@@ -460,7 +297,7 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                                     </FormControl>
                                 </Grid>
 
-                                <Grid item xs={12}>
+                                <Grid item xs={12} display={'flex'}   >
                                     <FormControl component="fieldset">
                                         <FormLabel component="legend">Status</FormLabel>
                                         <RadioGroup
@@ -473,6 +310,42 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                                             <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
                                         </RadioGroup>
                                     </FormControl>
+                                    {/* <FormControl component="fieldset">
+
+                                        <FormLabel component="legend">Featured</FormLabel>
+                                        <RadioGroup
+                                            row
+                                            name="isFeatured"f
+                                            value={productDetails.isFeatured}
+                                            onChange={handleChange}
+                                        >
+                                            <FormControlLabel value="active" control={<Radio />} label="Yes" />
+                                            <FormControlLabel value="inactive" control={<Radio />} label="No" />
+                                        </RadioGroup>
+                                    </FormControl> */}
+                                    <FormControl component="fieldset">
+                                        <FormLabel component="legend">Featured</FormLabel>
+                                        <FormGroup>
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={productDetails.isFeatured}
+                                                        onChange={(event) => {
+                                                            const newValue = !productDetails.isFeatured; // Toggle the boolean value
+                                                            setProductDetails({
+                                                                ...productDetails,
+                                                                isFeatured: newValue, // Update the state
+                                                            });
+                                                            console.log('New Featured Status:', newValue);
+                                                        }}
+                                                        name="isFeatured"
+                                                    />
+                                                }
+                                                label="Yes"
+                                            />
+                                        </FormGroup>
+                                    </FormControl>
+
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -499,8 +372,8 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                                     {previewImage ? (
                                         <Box
                                             component="img"
-                                            src={previewImage}
-                                            alt="Product preview"
+                                            src={previewImage || ''}
+                                            alt="user image"
                                             sx={{
                                                 width: '100%',
                                                 height: 200,

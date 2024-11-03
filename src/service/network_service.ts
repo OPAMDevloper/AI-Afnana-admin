@@ -150,8 +150,7 @@ class ApiService {
 
       return await response.json();
     } catch (error) {
-      console.log('[[[[[[[[[[[[[[[[[[[[[[[[[[[[[', error);
-
+ 
       console.error('API call error:', error);
       throw error;
     }

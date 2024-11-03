@@ -150,8 +150,6 @@ export function SignInView() {
       document.cookie = `accesstoken=${response.data.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}`;
       toast.success('Login successful!'); // Show success toast
 
-
-
       router.push('/');
     } catch (error) {
       toast(error.message || 'Login failed!'); // Show error toast

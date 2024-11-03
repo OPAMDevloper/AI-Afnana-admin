@@ -19,6 +19,8 @@ import {
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import ApiService from 'src/service/network_service';
+import { Icon } from '@iconify/react';
+import { UploadIcon } from 'lucide-react';
 
 
 const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
@@ -26,6 +28,7 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
 
     const [userDetails, setUserDetails] = useState<{
         name: string;
+        phone: string;
         email: string;
         address: string;
         status: string; // "active" or "inactive"
@@ -33,6 +36,7 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
         profileImage: File | null | undefined;
     }>({
         name: '',
+        phone: '',
         email: '',
         address: '',
         status: 'active',
@@ -114,20 +118,167 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
         }
     };
 
+    // return (
+
+
+    //     <Box sx={{ maxWidth: '100%', margin: 'auto', p: 3 }}>
+    //         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+    //             <Typography variant="h4" component="h1">
+    //                 {isEdit ? 'Edit User' : 'Add User'}
+    //             </Typography>
+    //             <Button variant="contained">
+    //                 New User
+    //             </Button>
+    //         </Box>
+    //         <Card sx={{ p: 3 }}>
+    //             <form onSubmit={handleSubmit}>
+    //                 <Grid container spacing={3}>
+    //                     {/* <Grid item xs={12}> */}
+    //                     <Grid item xs={12} sm={8}>
+    //                         <TextField
+    //                             fullWidth
+    //                             label="Name"
+    //                             name="name"
+    //                             value={userDetails.name}
+    //                             onChange={handleChange}
+    //                             required
+    //                         />
+    //                     </Grid>
+    //                     <Grid item xs={12} sm={4}>
+    //                         <Box sx={{ mb: 4 }}>
+    //                             <Typography variant="subtitle1" sx={{ mb: 2 }}>Main Image</Typography>
+    //                             <Box
+    //                                 sx={{
+    //                                     border: '2px dashed #ccc',
+    //                                     borderRadius: 2,
+    //                                     p: 2,
+    //                                     display: 'flex',
+    //                                     flexDirection: 'column',
+    //                                     alignItems: 'center',
+    //                                     bgcolor: '#f5f5f5',
+    //                                     mb: 2
+    //                                 }}
+    //                             >
+    //                                 {preview ? (
+    //                                     <Box
+    //                                         component="img"
+    //                                         src={preview}
+    //                                         alt="Product preview"
+    //                                         sx={{
+    //                                             width: '100%',
+    //                                             height: 200,
+    //                                             objectFit: 'contain',
+    //                                             mb: 2,
+    //                                             borderRadius: 1
+    //                                         }}
+    //                                     />
+    //                                 ) : (
+    //                                     <Icon icon={'eva:cloud-upload-fill'} color={'primary'} />
+    //                                 )}
+    //                                 <input
+    //                                     accept="image/*"
+    //                                     style={{ display: 'none' }}
+    //                                     id="main-image-upload"
+    //                                     type="file"
+    //                                     onChange={handleFileChange}
+    //                                 />
+    //                                 <label htmlFor="main-image-upload">
+    //                                     <Button
+    //                                         variant="contained"
+    //                                         component="span"
+    //                                         startIcon={<UploadIcon />}
+    //                                     >
+    //                                         {preview ? 'Change Image' : 'Upload Image'}
+    //                                     </Button>
+    //                                 </label>
+    //                             </Box>
+    //                         </Box>
+    //                     </Grid>
+    //                     {/* <Grid item xs={12}> */}
+    //                     <Grid item xs={12} sm={8}>
+    //                         <TextField
+    //                             fullWidth
+    //                             label="Email"
+    //                             name="email"
+    //                             type="email"
+    //                             value={userDetails.email}
+    //                             onChange={handleChange}
+    //                             required
+    //                         />
+    //                     </Grid>
+    //                     <Grid item xs={12} sm={8}>
+    //                         <TextField
+    //                             fullWidth
+    //                             label="Address"
+    //                             name="address"
+    //                             value={userDetails.address}
+    //                             onChange={handleChange}
+    //                             multiline
+    //                             rows={4}
+    //                             required
+    //                         />
+    //                     </Grid>
+
+    //                     <Grid item xs={12}>
+    //                         <FormControl component="fieldset">
+    //                             <FormLabel component="legend">Status</FormLabel>
+    //                             <RadioGroup
+    //                                 row
+    //                                 name="status"
+    //                                 value={userDetails.status}
+    //                                 onChange={handleChange}
+    //                             >
+    //                                 <FormControlLabel value="active" control={<Radio />} label="Active" />
+    //                                 <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
+    //                                 <FormControlLabel value="blocked" control={<Radio />} label="Blocked" />
+    //                             </RadioGroup>
+    //                         </FormControl>
+    //                     </Grid>
+    //                     <Grid item xs={12}>
+    //                         <TextField
+    //                             fullWidth
+    //                             label="Password"
+    //                             name="password"
+    //                             type="password"
+    //                             value={userDetails.password}
+    //                             onChange={handleChange}
+    //                             required
+    //                         />
+    //                     </Grid>
+
+
+    //                     <Grid item xs={12}>
+    //                         <Button
+    //                             type="submit"
+    //                             variant="contained"
+    //                             color="primary"
+    //                             fullWidth
+    //                             size="large"
+    //                         >
+    //                             {isEdit ? 'Update User' : 'Add User'}
+    //                         </Button>
+    //                     </Grid>
+    //                 </Grid>
+    //             </form>
+    //         </Card>
+    //     </Box>
+
+
+    // );
     return (
         <Box sx={{ maxWidth: '100%', margin: 'auto', p: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                 <Typography variant="h4" component="h1">
                     {isEdit ? 'Edit User' : 'Add User'}
                 </Typography>
-                <Button variant="contained" >
+                <Button variant="contained">
                     New User
                 </Button>
             </Box>
             <Card sx={{ p: 3 }}>
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} sm={8}>
                             <TextField
                                 fullWidth
                                 label="Name"
@@ -137,7 +288,57 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                                 required
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} sm={4}>
+                            <Box sx={{ mb: 4 }}>
+                                <Typography variant="subtitle1" sx={{ mb: 2 }}>Main Image</Typography>
+                                <Box
+                                    sx={{
+                                        border: '2px dashed #ccc',
+                                        borderRadius: 2,
+                                        p: 2,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        bgcolor: '#f5f5f5',
+                                        mb: 2
+                                    }}
+                                >
+                                    {preview ? (
+                                        <Box
+                                            component="img"
+                                            src={preview}
+                                            alt="Product preview"
+                                            sx={{
+                                                width: '100%',
+                                                height: 200,
+                                                objectFit: 'contain',
+                                                mb: 2,
+                                                borderRadius: 1
+                                            }}
+                                        />
+                                    ) : (
+                                        <Icon icon={'eva:cloud-upload-fill'} color={'primary'} />
+                                    )}
+                                    <input
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        id="main-image-upload"
+                                        type="file"
+                                        onChange={handleFileChange}
+                                    />
+                                    <label htmlFor="main-image-upload">
+                                        <Button
+                                            variant="contained"
+                                            component="span"
+                                            startIcon={<UploadIcon />}
+                                        >
+                                            {preview ? 'Change Image' : 'Upload Image'}
+                                        </Button>
+                                    </label>
+                                </Box>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} sm={8}>
                             <TextField
                                 fullWidth
                                 label="Email"
@@ -148,7 +349,15 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                                 required
                             />
                         </Grid>
-
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                fullWidth
+                                label="Phone" // Optional field (you can customize it as needed)
+                                name="phone"
+                                value={userDetails.phone}
+                                onChange={handleChange}
+                            />
+                        </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
@@ -161,7 +370,6 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                                 required
                             />
                         </Grid>
-
                         <Grid item xs={12}>
                             <FormControl component="fieldset">
                                 <FormLabel component="legend">Status</FormLabel>
@@ -174,11 +382,9 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                                     <FormControlLabel value="active" control={<Radio />} label="Active" />
                                     <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
                                     <FormControlLabel value="blocked" control={<Radio />} label="Blocked" />
-
                                 </RadioGroup>
                             </FormControl>
                         </Grid>
-
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
@@ -190,50 +396,6 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                                 required
                             />
                         </Grid>
-
-
-
-                        <Grid item xs={12} display="flex" alignItems="center">
-                            {preview ? (
-                                // <Avatar
-                                //     alt="Profile Picture"
-                                //     src={preview}
-                                //     sx={{ width: 56, height: 56, mr: 2 }}
-                                // /> 
-                                <Box
-                                    component="img"
-                                    sx={{
-                                        height: 150,
-                                        width: 180,
-                                    }}
-                                    alt="The house from the offer."
-                                    src={preview ? `${import.meta.env.VITE_APP_BASE_URL}/${preview}` : 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930'}
-                                />
-
-                            ) : (
-                                <Typography variant="body2" color="text.secondary">
-                                    No image uploaded
-                                </Typography>
-                            )}
-                        </Grid>
-                        <Grid item xs={12}>
-                            <input
-                                accept="image/*"
-                                style={{ display: 'none' }}
-                                id="profile-image-upload"
-                                type="file"
-                                onChange={handleFileChange}
-                            />
-                            <label htmlFor="profile-image-upload">
-                                <Button
-                                    variant="contained"
-                                    component="span"
-                                >
-                                    Upload Profile Picture
-                                </Button>
-                            </label>
-                        </Grid>
-
                         <Grid item xs={12}>
                             <Button
                                 type="submit"
@@ -248,10 +410,9 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                     </Grid>
                 </form>
             </Card>
-
-
         </Box>
     );
+
 };
 
 export default UserAddEdit;
