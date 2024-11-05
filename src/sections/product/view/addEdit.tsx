@@ -73,16 +73,6 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
     const [previewGallery, setPreviewGallery] = useState<string[]>([]);
     const [categories, setCategories] = useState<Category[]>([]); // State for categories
 
-
-
-    useEffect(() => {
-        return () => {
-            if (previewImage) {
-                URL.revokeObjectURL(previewImage);
-            }
-        };
-    }, [previewImage]);
-
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -133,22 +123,11 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
         setProductDetails((prevDetails) => ({ ...prevDetails, category: event.target.value }));
     };
 
-    // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const file = e.target.files?.[0];
-    //     if (file) {
-    //         setProductDetails((prevDetails) => ({ ...prevDetails, image: file }));
-    //         setPreviewImage(URL.createObjectURL(file));
-    //     }
-    // };
-
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            console.log("File selected:", file);
             setProductDetails((prevDetails) => ({ ...prevDetails, image: file }));
-            const objectURL = URL.createObjectURL(file);
-            console.log("Object URL created:", objectURL);
-            setPreviewImage(objectURL);
+            setPreviewImage(URL.createObjectURL(file));
         }
     };
 
@@ -169,7 +148,17 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
         formData.append('discountPrice', productDetails.discountPrice.toString());
         formData.append('quantity', productDetails.quantity.toString());
         formData.append('status', productDetails.status);
-        formData.append('category', productDetails.category); // Include category
+
+
+        if (productDetails.category) {
+            formData.append('category', productDetails.category);
+        }
+
+        if (productDetails.isFeatured) {
+            formData.append('isFeatured', 'true');
+        }
+
+
 
         if (productDetails.image) {
             formData.append('image', productDetails.image);
@@ -315,7 +304,7 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                                         <FormLabel component="legend">Featured</FormLabel>
                                         <RadioGroup
                                             row
-                                            name="isFeatured"f
+                                            name="isFeatured"
                                             value={productDetails.isFeatured}
                                             onChange={handleChange}
                                         >
@@ -372,8 +361,8 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                                     {previewImage ? (
                                         <Box
                                             component="img"
-                                            src={previewImage || ''}
-                                            alt="user image"
+                                            src={previewImage}
+                                            alt="Product preview"
                                             sx={{
                                                 width: '100%',
                                                 height: 200,

@@ -1,6 +1,6 @@
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
@@ -20,6 +20,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { WorkspacesPopover } from '../components/workspaces-popover';
 
 import type { WorkspacesPopoverProps } from '../components/workspaces-popover';
+import ApiService from 'src/service/network_service';
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +30,7 @@ export type NavContentProps = {
     title: string;
     icon: React.ReactNode;
     info?: React.ReactNode;
+    role: string[];
   }[];
   slots?: {
     topArea?: React.ReactNode;
@@ -114,6 +116,37 @@ export function NavMobile({
 export function NavContent({ data, slots, sx }: NavContentProps) {
   const pathname = usePathname();
 
+  const [roles, setRoles] = useState<string[]>([]);
+  // const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        // Replace with actual API call
+        const response = await new ApiService().get('admin/auth/profile');
+        setRoles(response.data.roles); // Assume response contains roles in the 'roles' field
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // // Filter navData based on user roles
+  // const filteredNavData = navData.filter(item  =>
+  //   item.roles.some(role => roles.includes(role))
+  // );
+
+  // const filteredNavData = data.filter((item) => {
+  //   return item.roles?.some((role) => roles.includes(role));
+  // });
+  const filteredNavData = data.filter((item) => {
+    // Ensure each item has a roles field and filter it based on user's roles
+    return item.role?.some((role) => roles.includes(role)); // Filter items if any of the roles match
+  });
+
+
   return (
     <>
       <Logo />
@@ -125,7 +158,7 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
       <Scrollbar fillContent>
         <Box component="nav" display="flex" flex="1 1 auto" flexDirection="column" sx={sx}>
           <Box component="ul" gap={0.5} display="flex" flexDirection="column">
-            {data.map((item) => {
+            {filteredNavData.map((item) => {
               const isActived = item.path === pathname;
 
               return (
