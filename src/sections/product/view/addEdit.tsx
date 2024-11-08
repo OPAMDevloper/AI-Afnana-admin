@@ -43,6 +43,7 @@ interface ProductDetails {
     status: 'active' | 'inactive';
     image: File | null;
     gallery: File[];
+    imageModel: string;
     category: string; // Category field
 }
 
@@ -66,12 +67,14 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
         status: 'active',
         isFeatured: false,
         image: null,
+        imageModel: '',
         gallery: [],
         category: '', // Initialize category
     });
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [previewGallery, setPreviewGallery] = useState<string[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]); // State for categories
+    const [previewImageModel, setPreviewImageModel] = useState<string | null>(null);
+    const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -103,6 +106,9 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                     if (response.data.gallery) {
                         setPreviewGallery(response.data.gallery.map((image: any) => import.meta.env.VITE_APP_BASE_URL + '/' + image));
                     }
+                    if (response.data.imageModel) {
+                        setPreviewImageModel(import.meta.env.VITE_APP_BASE_URL + '/' + response.data.imageModel);
+                    }
                 } catch (error) {
                     console.error("Error fetching product details:", error);
                 }
@@ -111,6 +117,7 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
             fetchProductDetails();
         }
     }, [id]);
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown; }>) => {
         const { name, value } = e.target;
@@ -136,6 +143,14 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
         if (files.length) {
             setProductDetails((prevDetails) => ({ ...prevDetails, gallery: files }));
             setPreviewGallery(files.map(file => URL.createObjectURL(file)));
+        }
+    };
+
+    const handleImageModelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setProductDetails((prevDetails: any) => ({ ...prevDetails, imageModel: file }));
+            setPreviewImageModel(URL.createObjectURL(file));
         }
     };
 
@@ -168,6 +183,11 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
             formData.append('gallery', image);
         });
 
+
+        if (productDetails.imageModel) {
+            formData.append('imageModel', productDetails.imageModel);
+        }
+
         const url = isEdit ? `admin/product/update/${id}` : 'admin/product/create';
 
         try {
@@ -187,6 +207,14 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
         const newGallery = [...previewGallery];
         newGallery.splice(index, 1);
         setPreviewGallery(newGallery);
+    };
+
+
+    const handleRemoveImageModelImage = () => {
+        // const newGallery = [...previewGallery];
+        // newGallery.splice(index, 1);
+        // setPreviewGallery(newGallery);
+        setPreviewImageModel(null);
     };
 
 
@@ -398,7 +426,7 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                             {/* Gallery Section */}
                             <Divider sx={{ my: 3 }} />
                             <Box>
-                                <Typography variant="subtitle1" sx={{ mb: 2 }}>Gallery Images</Typography>
+                                <Typography variant="subtitle1" sx={{ mb: 2 }}> 3D Product Image</Typography>
                                 <Box
                                     sx={{
                                         border: '2px dashed #ccc',
@@ -408,7 +436,7 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                                     }}
                                 >
                                     <Grid container spacing={1}>
-                                        {previewGallery.map((preview, index) => (
+                                        {/* {previewGallery.map((preview, index) => (
                                             <Grid item xs={6} key={index}>
                                                 <Box sx={{ position: 'relative' }}>
                                                     <Box
@@ -437,17 +465,43 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                                                     </IconButton>
                                                 </Box>
                                             </Grid>
-                                        ))}
+                                        ))} */}
+
+                                        {previewImageModel && <Grid item xs={6}>
+                                            <Box sx={{ position: 'relative', border: '1px dashed', padding: 2, textAlign: 'center' }}>
+                                                <Box sx={{ marginBottom: 2 }}>
+                                                    <Typography variant="subtitle1">Model Uploaded</Typography>
+                                                    <Typography variant="body2" color="textSecondary">
+                                                        Your 3D model  is ready.
+                                                    </Typography>
+                                                </Box>
+
+                                                <IconButton
+                                                    size="small"
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        top: -8,
+                                                        right: -8,
+                                                        bgcolor: 'background.paper',
+                                                        '&:hover': { bgcolor: 'error.light', color: 'white' }
+                                                    }}
+                                                    onClick={() => handleRemoveImageModelImage()}
+                                                >
+                                                    <DeleteIcon fontSize="small" />
+                                                </IconButton>
+                                            </Box>
+                                        </Grid>}
                                     </Grid>
 
                                     <Box sx={{ mt: 2, textAlign: 'center' }}>
                                         <input
-                                            accept="image/*"
+                                            // accept="image/*"
+                                            accept=".glb"
                                             style={{ display: 'none' }}
                                             id="gallery-upload"
                                             type="file"
                                             multiple
-                                            onChange={handleGalleryChange}
+                                            onChange={handleImageModelChange}
                                         />
                                         <label htmlFor="gallery-upload">
                                             <Button
@@ -455,7 +509,7 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                                                 component="span"
                                             // startIcon={<CollectionsIco   />}
                                             >
-                                                Add Gallery Images
+                                                Add 3D Model
                                             </Button>
                                         </label>
                                     </Box>

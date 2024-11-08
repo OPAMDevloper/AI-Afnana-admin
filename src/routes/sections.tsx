@@ -28,7 +28,7 @@ export const Admin = lazy(() => import('src/pages/admin/admin'));
 export const TrashAdmin = lazy(() => import('src/pages/admin/TrashAdmin'));
 export const AddEditAdmin = lazy(() => import('src/pages/admin/addEditAdmin'));
 
-
+``
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products/products'));
 const TrashProductPage = lazy(() => import('src/pages/products/trashproduct'));
