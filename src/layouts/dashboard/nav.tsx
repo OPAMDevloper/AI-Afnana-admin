@@ -27,44 +27,56 @@ import { SvgColor } from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
 
+
+// export type NavItem = {
+//   path: string;
+//   title: string;
+//   icon: string;
+//   info?: React.ReactNode;
+//   role: string[];
+// };
+
+// export type NavGroup = {
+//   [key: string]: NavItem[];
+// };
 // export type NavContentProps = {
-//   data: {
-//     path: string;
-//     title: string;
-//     icon: React.ReactNode;
-//     info?: React.ReactNode;
-//     role: string[];
-//   }[];
+//   data: NavItem[];
 //   slots?: {
 //     topArea?: React.ReactNode;
 //     bottomArea?: React.ReactNode;
 //   };
 //   sx?: SxProps<Theme>;
+//   old?: {
+//     path: string;
+//     title: string;
+//     icon: string;
+//     info?: React.ReactNode;
+//     role: string[];
+//   }[];
 // };
 
 
+// Define the base NavItem type
 export type NavItem = {
-  path: string;
   title: string;
+  path: string;
   icon: string;
   info?: React.ReactNode;
   role: string[];
 };
 
+// Define the structure for grouped navigation
+export type NavGroups = {
+  [key: string]: NavItem[];
+};
+
 export type NavContentProps = {
-  data: NavItem[];
+  data: NavGroups;
   slots?: {
     topArea?: React.ReactNode;
     bottomArea?: React.ReactNode;
   };
   sx?: SxProps<Theme>;
-  old?: {
-    path: string;
-    title: string;
-    icon: string;
-    info?: React.ReactNode;
-    role: string[];
-  }[];
 };
 
 
@@ -164,90 +176,30 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
     fetchProfile();
   }, []);
 
-  // // Filter navData based on user roles
-  // const filteredNavData = navData.filter(item  =>
-  //   item.roles.some(role => roles.includes(role))
-  // );
 
-  // const filteredNavData = data.filter((item) => {
-  //   return item.roles?.some((role) => roles.includes(role));
-  // });
-  // const filteredNavData = data.filter((item) => {
-  //   // Ensure each item has a roles field and filter it based on user's roles
-  //   return item.role?.some((role) => roles.includes(role)); // Filter items if any of the roles match
-  // });
+  console.log('dataaa', data);
 
+  // const filteredNavData = Object.entries(data).reduce((acc, [groupName, items]) => {
+  //   const filteredItems = items.filter((item: any) =>
+  //     item.role?.some((role: any) => roles.includes(role))
+  //   );
+  //   if (filteredItems.length > 0) {
+  //     acc[groupName] = filteredItems;
+  //   }
+  //   return acc;
+  // }, {} as { [key: string]: NavItem[] });
 
-  // return (
-  //   <>
-  //     <Logo />
-
-  //     {slots?.topArea}
-
-
-  //     <Scrollbar fillContent>
-  //       <Box component="nav" display="flex" flex="1 1 auto" flexDirection="column" sx={sx}>
-  //         <Box component="ul" gap={0.5} display="flex" flexDirection="column">
-  //           {filteredNavData.map((item) => {
-  //             const isActived = item.path === pathname;
-
-  //             return (
-  //               <ListItem disableGutters disablePadding key={item.title}>
-  //                 <ListItemButton
-  //                   disableGutters
-  //                   component={RouterLink}
-  //                   href={item.path}
-  //                   sx={{
-  //                     pl: 2,
-  //                     py: 1,
-  //                     gap: 2,
-  //                     pr: 1.5,
-  //                     borderRadius: 0.75,
-  //                     typography: 'body2',
-  //                     fontWeight: 'fontWeightMedium',
-  //                     color: 'var(--layout-nav-item-color)',
-  //                     minHeight: 'var(--layout-nav-item-height)',
-  //                     ...(isActived && {
-  //                       fontWeight: 'fontWeightSemiBold',
-  //                       bgcolor: 'var(--layout-nav-item-active-bg)',
-  //                       color: 'var(--layout-nav-item-active-color)',
-  //                       '&:hover': {
-  //                         bgcolor: 'var(--layout-nav-item-hover-bg)',
-  //                       },
-  //                     }),
-  //                   }}
-  //                 >
-  //                   <Box component="span" sx={{ width: 24, height: 24 }}>
-  //                     {item.icon}
-  //                   </Box>
-
-  //                   <Box component="span" flexGrow={1}>
-  //                     {item.title}
-  //                   </Box>
-
-  //                   {item.info && item.info}
-  //                 </ListItemButton>
-  //               </ListItem>
-  //             );
-  //           })}
-  //         </Box>
-  //       </Box>
-  //     </Scrollbar>
-
-  //     {slots?.bottomArea}
-
-  //   </>
-  // );
-
-  const filteredNavData = Object.entries(data).reduce((acc, [groupName, items]) => {
-    const filteredItems = items.filter((item: any) =>
-      item.role?.some((role: any) => roles.includes(role))
+  const filteredNavData = Object.entries(data).reduce<NavGroups>((acc, [groupName, items]) => {
+    const groupItems = items as NavItem[];
+    const filteredItems = groupItems.filter((item) =>
+      item.role.some((role) => roles.includes(role))
     );
+
     if (filteredItems.length > 0) {
       acc[groupName] = filteredItems;
     }
     return acc;
-  }, {} as { [key: string]: NavItem[] });
+  }, {});
 
   // Function to toggle the group visibility (collapse/expand)
   const toggleGroup = (groupName: string) => {

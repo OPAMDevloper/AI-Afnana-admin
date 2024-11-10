@@ -12,6 +12,7 @@ import { icons } from 'lucide-react';
 import ApiService from 'src/service/network_service';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { NavGroups, NavItem } from './dashboard/nav';
 
 
 const icon = (name: string) => (
@@ -234,8 +235,10 @@ export const navData = [
 
 
 
+
 // Group the navigation items by their base category
-export const navData1 = {
+export const navData1: NavGroups = {
+
   dashboard: [
     {
       title: 'Dashboard',
