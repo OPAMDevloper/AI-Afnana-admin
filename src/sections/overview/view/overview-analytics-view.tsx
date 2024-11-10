@@ -65,7 +65,7 @@ export function OverviewAnalyticsView() {
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        {/* <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
             title="Messages"
             percent={3.6}
@@ -77,7 +77,7 @@ export function OverviewAnalyticsView() {
               series: [56, 30, 23, 54, 47, 40, 62, 73],
             }}
           />
-        </Grid>
+        </Grid> */}
 
         <Grid xs={12} md={6} lg={4}>
           <AnalyticsCurrentVisits
@@ -100,8 +100,8 @@ export function OverviewAnalyticsView() {
             chart={{
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
               series: [
-                { name: 'Team A', data: [43, 33, 22, 37, 67, 68, 37, 24, 55] },
-                { name: 'Team B', data: [51, 70, 47, 67, 40, 37, 24, 70, 24] },
+                { name: 'India', data: [43, 33, 22, 37, 67, 68, 37, 24, 55] },
+                { name: 'Pakistan', data: [51, 70, 47, 67, 40, 37, 24, 70, 24] },
               ],
             }}
           />
@@ -121,19 +121,7 @@ export function OverviewAnalyticsView() {
           />
         </Grid> */}
 
-        <Grid xs={12} md={6} lg={4}>
-          <AnalyticsCurrentSubject
-            title="Current subject"
-            chart={{
-              categories: ['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math'],
-              series: [
-                { name: 'Series 1', data: [80, 50, 30, 40, 100, 20] },
-                { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
-                { name: 'Series 3', data: [44, 76, 78, 13, 43, 10] },
-              ],
-            }}
-          />
-        </Grid>
+
 
         <Grid xs={12} md={6} lg={8}>
           <AnalyticsNews title="Trending Blogs" list={_posts.slice(0, 5)} />

@@ -500,6 +500,13 @@ export function UserView({ type }: { type: string }) {
         <Button
           variant="contained"
           color="inherit"
+          onClick={() => {
+            if (type == 'trash') {
+
+            } else {
+              router.push('/add-user');
+            }
+          }}
           startIcon={<Iconify icon="mingcute:add-line" />}
         >
           {type === 'trash' ? 'Restore' : 'New user'}
@@ -538,7 +545,7 @@ export function UserView({ type }: { type: string }) {
                 headLabel={[
                   { id: 'name', label: 'Name' },
                   { id: 'email', label: 'Email' },
-                  { id: 'createdAt', label: 'Created At' },
+                  { id: 'register-date', label: 'Regsiter Date' },
                   { id: 'status', label: 'Status' },
                   { id: 'options', label: 'Options' },
                 ]}

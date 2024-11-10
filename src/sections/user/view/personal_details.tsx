@@ -291,6 +291,7 @@ import { toast } from 'react-toastify';
 import ApiService from 'src/service/network_service';
 import { EditIcon, SaveIcon, ShieldClose } from 'lucide-react';
 import UserAddEdit from './addEdit';
+import { fDate } from 'src/utils/format-time';
 
 
 interface UserDetailsProps {
@@ -405,7 +406,7 @@ const UserDetailsCard = ({ userId }: UserDetailsProps) => {
 
                                     <Grid item xs={12}>
                                         <Typography variant="body1">
-                                            <strong>Member Since:</strong> {(userDetails.createdAt)}
+                                            <strong>Member Since:</strong> {fDate(userDetails.createdAt)}
                                         </Typography>
                                     </Grid>
                                 </Grid>

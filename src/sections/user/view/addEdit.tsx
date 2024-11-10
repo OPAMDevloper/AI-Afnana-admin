@@ -21,11 +21,13 @@ import { toast } from 'react-toastify';
 import ApiService from 'src/service/network_service';
 import { Icon } from '@iconify/react';
 import { UploadIcon } from 'lucide-react';
+import { useRouter } from 'src/routes/hooks';
 
 
 const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
     const { id } = useParams();
 
+    const router = useRouter()
     const [userDetails, setUserDetails] = useState<{
         name: string;
         phone: string;
@@ -124,8 +126,12 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                 <Typography variant="h4" component="h1">
                     {isEdit ? 'Edit User' : 'Add User'}
                 </Typography>
-                <Button variant="contained">
-                    New User
+                <Button variant="contained" onClick={() => {
+                    // navigate to useraddedit route
+
+                    router.push(`/add-user`)
+                }}>
+                    Add User
                 </Button>
             </Box>
             <Card sx={{ p: 3 }}>

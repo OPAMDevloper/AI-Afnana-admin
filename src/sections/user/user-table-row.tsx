@@ -12,7 +12,7 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { fToNow } from 'src/utils/format-time';
+import { fDate, fToNow } from 'src/utils/format-time';
 import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
@@ -90,7 +90,7 @@ export function UserTableRow({ row, type, selected, onSelectRow, onDeleteRow, on
 
         <TableCell>{row.email}</TableCell>
 
-        <TableCell>{fToNow(row?.createdAt)}</TableCell>
+        <TableCell>{fDate(row?.createdAt)}</TableCell>
 
         <TableCell align="center">
           {row.status === 'active' ? (
