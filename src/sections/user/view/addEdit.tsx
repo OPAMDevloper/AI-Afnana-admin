@@ -117,7 +117,7 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
             console.error('Error submitting form:', error.message);
         }
     };
- 
+
     return (
         <Box sx={{ maxWidth: '100%', margin: 'auto', p: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -238,7 +238,7 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                                 </RadioGroup>
                             </FormControl>
                         </Grid>
-                        <Grid item xs={12}>
+                        {!isEdit && <Grid item xs={12}>
                             <TextField
                                 fullWidth
                                 label="Password"
@@ -248,7 +248,7 @@ const UserAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                                 onChange={handleChange}
                                 required
                             />
-                        </Grid>
+                        </Grid>}
                         <Grid item xs={12}>
                             <Button
                                 type="submit"

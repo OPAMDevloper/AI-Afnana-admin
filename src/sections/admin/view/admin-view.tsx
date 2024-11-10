@@ -237,7 +237,7 @@ export function AdminsView({ type = 'all' }) {
         Admins
       </Typography>
 
-      <CartIcon totalItems={8} />
+      {/* <CartIcon totalItems={8} /> */}
 
 
       <Card>

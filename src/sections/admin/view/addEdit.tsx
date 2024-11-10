@@ -321,7 +321,7 @@ const AdminAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
     const [isEdit, setIsEdit] = useState(false);
     const [preview, setPreview] = useState<string | null>(null);
 
-    const rolesList = ["admin", "blog", "product", "user", "order", "category"]; // List of available roles
+    const rolesList = ["admin", "blog", "product", "user", "order", "category", "dashboard", 'country']; // List of available roles
 
     useEffect(() => {
         const fetchAdminDetails = async () => {
@@ -530,7 +530,7 @@ const AdminAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                                 </RadioGroup>
                             </FormControl>
                         </Grid>
-                        <Grid item xs={12}>
+                        {!isEdit && <Grid item xs={12}>
                             <TextField
                                 fullWidth
                                 label="Password"
@@ -540,7 +540,7 @@ const AdminAddEdit = ({ onupdate }: { onupdate: (profile: any) => any }) => {
                                 onChange={handleChange}
                                 required
                             />
-                        </Grid>
+                        </Grid>}
                         <Grid item xs={12}>
                             <FormControl component="fieldset">
                                 <FormLabel component="legend">Roles</FormLabel>

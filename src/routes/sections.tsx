@@ -8,7 +8,7 @@ import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import ProfileSidebar from 'src/sections/user/view/profileSidebar';
-import CategoryManagement from 'src/pages/categoryPage';
+import CategoryManagement from 'src/pages/cms/categoryPage';
 import { OrderView } from 'src/sections/orders/view/order-view';
 
 // ----------------------------------------------------------------------
@@ -27,8 +27,7 @@ export const AddEditBlogs = lazy(() => import('src/pages/blogs/addEditBLogs'));
 export const Admin = lazy(() => import('src/pages/admin/admin'));
 export const TrashAdmin = lazy(() => import('src/pages/admin/TrashAdmin'));
 export const AddEditAdmin = lazy(() => import('src/pages/admin/addEditAdmin'));
-
-``
+export const CountryManagement = lazy(() => import('src/pages/cms/countryPage'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products/products'));
 const TrashProductPage = lazy(() => import('src/pages/products/trashproduct'));
@@ -69,6 +68,8 @@ export function Router() {
         { path: 'product/:id/edit', element: <AddEditProductPage /> },
         { path: 'trash-product', element: <TrashProductPage />, },
         { path: 'category', element: <CategoryManagement /> },
+        { path: 'country', element: <CountryManagement /> },
+
         // { path: 'blog', element: <Blogs /> },
         { path: 'blogs', element: <Blogs /> },
         { path: 'add-blogs', element: <AddEditBlogs /> },

@@ -1,3 +1,7 @@
+
+// ----------------------------------------------------------------------
+
+
 import { Label } from 'src/components/label';
 import { SvgColor } from 'src/components/svg-color';
 
@@ -10,16 +14,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-
-
-
-// ----------------------------------------------------------------------
-
 const icon = (name: string) => (
   <SvgColor width="100%" height="100%" src={`/assets/icons/navbar/${name}.svg`} />
 );
 
-export const navData = [
+export const navDataold = [
   {
     title: 'Dashboard',
     path: '/',
@@ -125,5 +124,230 @@ export const navData = [
   },
 
 ];
+export const navData = [
+  {
+    title: 'Dashboard',
+    path: '/',
+    icon: 'ic-analytics',
+    role: ['dashboard']
+  },
+  {
+    title: 'User',
+    path: '/user',
+    icon: 'ic-user',
+    role: ['user']
+  },
+  {
+    title: 'Add User',
+    path: '/add-user',
+    icon: 'ic-user',
+    role: ['user']
+  },
+  {
+    title: 'Trash User',
+    path: '/trashuser',
+    icon: 'ic-user',
+    role: ["user"]
+  },
 
+  {
+    title: 'Product',
+    path: '/products',
+    icon: 'ic-cart',
+    role: ["product"]
+
+  },
+  {
+    title: 'Add Products',
+    path: '/add-product',
+    icon: 'ic-cart',
+    role: ["product"]
+
+
+  },
+  {
+    title: 'Trash Product',
+    path: '/trash-product',
+    icon: 'ic-cart',
+    role: ["product"]
+
+  },
+  {
+    title: 'Category',
+    path: '/category',
+    icon: 'category',
+    role: ["category"]
+
+  },
+  {
+    title: "Order",
+    path: '/orders',
+    icon: 'ic-order',
+    role: ["order"]
+
+  },
+  {
+    title: "Blogs",
+    path: '/blogs',
+    icon: 'ic-blog',
+    role: ["blog"]
+
+  },
+  {
+    title: "Add Blogs",
+    path: '/add-blogs',
+    icon: 'ic-blog',
+    role: ["blog"]
+
+  },
+  {
+    title: "Trash Blogs",
+    path: '/trash-blogs',
+    icon: 'ic-blog',
+    role: ["blog"]
+
+  },
+  {
+    title: "Admin",
+    path: '/admin',
+    icon: 'ic-user',
+    role: ["admin"]
+
+  },
+  {
+    title: "Add Admin",
+    path: '/add-admin',
+    icon: 'ic-user',
+    role: ["admin"]
+
+  },
+  {
+    title: "Trash Admin",
+    path: '/trash-admin',
+    icon: 'ic-user',
+    role: ["admin"]
+
+  },
+
+];
+
+
+
+
+// Group the navigation items by their base category
+export const navData1 = {
+  dashboard: [
+    {
+      title: 'Dashboard',
+      path: '/',
+      icon: 'ic-analytics',
+      role: ['dashboard']
+    }
+  ],
+
+  product: [
+    {
+      title: 'Product List',
+      path: '/products',
+      icon: 'ic-cart',
+      role: ['product']
+    },
+    {
+      title: 'Add Product',
+      path: '/add-product',
+      icon: 'ic-cart',
+      role: ['product']
+    },
+    {
+      title: 'Trash Product',
+      path: '/trash-product',
+      icon: 'ic-cart',
+      role: ['product']
+    }
+  ],
+
+  admin: [
+    {
+      title: 'Admin List',
+      path: '/admin',
+      icon: 'ic-user',
+      role: ['admin']
+    },
+    {
+      title: 'Add Admin',
+      path: '/add-admin',
+      icon: 'ic-user',
+      role: ['admin']
+    },
+    {
+      title: 'Trash Admin',
+      path: '/trash-admin',
+      icon: 'ic-user',
+      role: ['admin']
+    }
+  ],
+
+  order: [
+    {
+      title: 'Order',
+      path: '/orders',
+      icon: 'ic-order',
+      role: ['order']
+    }
+  ],
+  CMS: [
+    {
+      title: 'Category',
+      path: '/category',
+      icon: 'category',
+      role: ['category']
+    },
+    {
+      title: 'Country',
+      path: '/country',
+      icon: 'country',
+      role: ['country']
+    }
+  ],
+  user: [
+    {
+      title: 'User List',
+      path: '/user',
+      icon: 'ic-user',
+      role: ['user']
+    },
+    {
+      title: 'Add User',
+      path: '/add-user',
+      icon: 'ic-user',
+      role: ['user']
+    },
+    {
+      title: 'Trash User',
+      path: '/trashuser',
+      icon: 'ic-user',
+      role: ['user']
+    }
+  ],
+  blog: [
+    {
+      title: 'Blog List',
+      path: '/blogs',
+      icon: 'ic-blog',
+      role: ['blog']
+    },
+    {
+      title: 'Add Blog',
+      path: '/add-blogs',
+      icon: 'ic-blog',
+      role: ['blog']
+    },
+    {
+      title: 'Trash Blogs',
+      path: '/trash-blogs',
+      icon: 'ic-blog',
+      role: ['blog']
+    }
+  ],
+};
 

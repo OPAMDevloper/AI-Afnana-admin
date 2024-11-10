@@ -65,7 +65,15 @@ const defaultFilters = {
   rating: RATING_OPTIONS[0],
   category: CATEGORY_OPTIONS[0].value,
 };
+interface optionsData {
+  _id: string;
+  name: string;
+}
 
+interface Country {
+  _id: string;
+  name: string;
+}
 interface PaginationData {
   totalItems: number;
   count: number;
@@ -82,6 +90,8 @@ export function ProductsView({ type = 'all' }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openFilter, setOpenFilter] = useState(false);
+  const [filterOptions, setFilterOptions] = useState<optionsData[]>([]);
+
 
   const [orderBy, setOrderBy] = useState('name');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
@@ -112,9 +122,8 @@ export function ProductsView({ type = 'all' }) {
     setFilters((prevValue) => ({ ...prevValue, ...updateState }));
   }, []);
 
-  const canReset = Object.keys(filters).some(
-    (key) => filters[key as keyof FiltersProps] !== defaultFilters[key as keyof FiltersProps]
-  );
+
+
 
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -163,8 +172,34 @@ export function ProductsView({ type = 'all' }) {
       }
     };
 
+
+
     fetchProducts(page, rowsPerPage);
   }, [type, page, rowsPerPage, orderBy, order, filterName]);
+
+
+  useEffect(() => {
+    const fetchCountry = async () => {
+      const countries: optionsData[] = []; try {
+        const response = await new ApiService().get('admin/country/all'); // Adjust the API endpoint as needed
+        if (response.statusCode === 200) {
+          if (response.data.length > 0) {
+            response.data.forEach((country: any) => { // Use forEach instead of map
+              countries.push({
+                _id: country._id,
+                name: country.name
+              });
+            });
+          }
+        }
+        setFilterOptions(countries);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCountry();
+  }, [])
 
   const handleDeleteUser = async (idss: string[]) => {
     try {
@@ -201,10 +236,28 @@ export function ProductsView({ type = 'all' }) {
     }
   }
 
+  const handleFilterOptions = async (id: string) => {
+    try {
+      const response = await new ApiService().get(`admin/product/get-by-country/${id}`); // Example endpoint
+      if (response.statusCode === 200) {
+        setProduct(response.data.data);
+        setPaginationData({
+          totalItems: response.data.totalItems,
+          count: response.data.count,
+          page: response.data.page,
+          totalPages: response.data.totalPages,
+          isNextPage: response.data.isNextPage,
+          isPrevPage: response.data.isPrevPage,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching filter options:', error);
+    }
+  };
+
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterName(event.target.value);
     setPage(0);
-
   };
   const handleTrashUser = async (idss: string[]) => {
     try {
@@ -231,11 +284,17 @@ export function ProductsView({ type = 'all' }) {
         Products
       </Typography>
 
-      <CartIcon totalItems={8} />
+      {/* <CartIcon totalItems={8} /> */}
 
 
       <Card>
         <ProdcuttableToolbar
+          handleFilterOptions={(id) => {
+
+            handleFilterOptions(id);
+
+          }}
+          filterOptions={filterOptions}
           numSelected={selectedRow.length}
           filterName={filterName}
           idsList={selectedRow}
@@ -249,7 +308,7 @@ export function ProductsView({ type = 'all' }) {
           onTrashRow={(ids: string[]) => {
             handleTrashUser(ids);
           }}
-          onFilterName={( data) => {
+          onFilterName={(data: any) => {
             handleFilterName(data);
           }}
         />

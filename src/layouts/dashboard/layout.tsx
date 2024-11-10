@@ -13,7 +13,7 @@ import { Iconify } from 'src/components/iconify';
 import { Main } from './main';
 import { layoutClasses } from '../classes';
 import { NavMobile, NavDesktop } from './nav';
-import { navData } from '../config-nav-dashboard';
+import { navData, navData1 } from '../config-nav-dashboard';
 import { Searchbar } from '../components/searchbar';
 // import { _workspaces } from '../config-nav-workspace';
 import { MenuButton } from '../components/menu-button';
@@ -80,7 +80,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
             ),
             rightArea: (
               <Box gap={1} display="flex" alignItems="center">
-                <Searchbar />
+                {/* <Searchbar /> */}
                 {/* <LanguagePopover data={_langs} /> */}
                 {/* <NotificationsPopover data={_notifications} /> */}
                 <AccountPopover
@@ -111,7 +111,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
        * Sidebar
        *************************************** */
       sidebarSection={
-        <NavDesktop data={navData} layoutQuery={layoutQuery} />
+        <NavDesktop data={navData1} layoutQuery={layoutQuery} />
       }
       /** **************************************
        * Footer

@@ -44,10 +44,16 @@ interface ProductDetails {
     image: File | null;
     gallery: File[];
     imageModel: string;
+    country: string;
     category: string; // Category field
 }
 
 interface Category {
+    _id: string;
+    name: string;
+}
+
+interface Country {
     _id: string;
     name: string;
 }
@@ -70,11 +76,14 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
         imageModel: '',
         gallery: [],
         category: '', // Initialize category
+        country: '',
     });
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [previewGallery, setPreviewGallery] = useState<string[]>([]);
     const [previewImageModel, setPreviewImageModel] = useState<string | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [country, setCountry] = useState<Country[]>([]);
+
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -86,6 +95,17 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
             }
         };
 
+        const fetchCountry = async () => {
+            try {
+                const response = await new ApiService().get('admin/country/all'); // Adjust the API endpoint as needed
+                setCountry(response.data);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+
+        fetchCountry();
+
         fetchCategories();
     }, []);
 
@@ -95,10 +115,14 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
             const fetchProductDetails = async () => {
                 try {
                     const response = await new ApiService().get(`admin/product/show/${id}`);
+
+                    console.log('response', response.data);
+
                     setProductDetails({
                         ...response.data,
                         image: response.data.image || null,
-                        gallery: response.data.gallery || [],
+                        country: response.data.country?._id || null,
+                        category: response.data.category._id || null,
                     });
                     if (response.data.image) {
                         setPreviewImage(import.meta.env.VITE_APP_BASE_URL + '/' + response.data.image);
@@ -108,6 +132,14 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                     }
                     if (response.data.imageModel) {
                         setPreviewImageModel(import.meta.env.VITE_APP_BASE_URL + '/' + response.data.imageModel);
+                    }
+                    if (response.data.country) {
+                        console.log('country name', response.data.country.name)
+                        setProductDetails((prevDetails) => ({ ...prevDetails, country: response.data.country.name }));
+                    }
+                    if (response.data.category) {
+                        console.log('category name', response.data.category.name)
+                        // setCategories()
                     }
                 } catch (error) {
                     console.error("Error fetching product details:", error);
@@ -124,7 +156,13 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
         setProductDetails((prevDetails) => ({ ...prevDetails, [name ?? '']: value }));
     };
 
-    const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    const handleCountryChange = (event: SelectChangeEvent<string>) => {
+
+        console.log('countrycategory', event.target.value);
+        setProductDetails((prevDetails) => ({ ...prevDetails, country: event.target.value }));
+    };
+
+    const handleCategoryChange = (event: SelectChangeEvent<string>) => {
         console.log('categogry category category category category ', event.target.value);
 
         setProductDetails((prevDetails) => ({ ...prevDetails, category: event.target.value }));
@@ -156,6 +194,58 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // Validation logic for all fields
+        const errors: { [key: string]: string } = {};
+
+        // Check all fields to ensure they are filled
+        if (!productDetails.name) {
+            errors.name = "Product name is required.";
+        }
+        if (!productDetails.description) {
+            errors.description = "Product description is required.";
+        }
+        if (!productDetails.price) {
+            errors.price = "Product price is required.";
+        } else if (productDetails.price <= 0) {
+            errors.price = "Product price must be greater than 0.";
+        }
+        if (!productDetails.discountPrice) {
+            errors.discountPrice = "Discount price is required.";
+        } else if (productDetails.discountPrice < 0) {
+            errors.discountPrice = "Discount price must be a valid number and cannot be negative.";
+        }
+        if (!productDetails.quantity) {
+            errors.quantity = "Product quantity is required.";
+        } else if (productDetails.quantity <= 0) {
+            errors.quantity = "Product quantity must be greater than 0.";
+        }
+        if (!productDetails.status) {
+            errors.status = "Product status is required.";
+        }
+        if (!productDetails.category) {
+            errors.category = "Product category is required.";
+        }
+        if (!productDetails.image) {
+            errors.image = "Product image is required.";
+        }
+        // if (!productDetails.gallery || productDetails.gallery.length === 0) {
+        //     errors.gallery = "At least one product image in the gallery is required.";
+        // }
+        if (!productDetails.imageModel) {
+            errors.imageModel = "Product image model is required.";
+        }
+
+        // Display validation errors
+        if (Object.keys(errors).length > 0) {
+            Object.values(errors).forEach((errorMessage) => {
+                toast.error(errorMessage);
+            });
+            return; // Do not submit form if validation fails
+        }
+
+
+
         const formData = new FormData();
         formData.append('name', productDetails.name);
         formData.append('description', productDetails.description);
@@ -167,6 +257,10 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
 
         if (productDetails.category) {
             formData.append('category', productDetails.category);
+        }
+
+        if (productDetails.country) {
+            formData.append('country', productDetails.country);
         }
 
         if (productDetails.isFeatured) {
@@ -192,7 +286,8 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
 
         try {
             const response = await new ApiService().post(url, formData);
-            if (response.statusCode === 201) {
+
+            if (response.statusCode === 201 || response.statusCode === 200 || response.statusCode === 202) {
                 router.push('/products');
                 toast.success('Product saved successfully');
             }
@@ -296,14 +391,20 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                                 </Grid>
 
                                 <Grid item xs={12} sm={6}>
-                                    <FormControl fullWidth>
-                                        <InputLabel id="category-label">Category</InputLabel>
+                                    <FormControl fullWidth margin="normal">
+                                        <InputLabel
+                                            id="category-label"
+                                        // shrink={!!productDetails.category} // Shrink when a category is selected
+                                        >
+                                            Category
+                                        </InputLabel>
                                         <Select
                                             labelId="category-label"
                                             name="category"
-                                            value={productDetails.category}
-                                            onChange={handleSelectChange}
+                                            value={productDetails.category || ''} // Make sure it's empty string if no value is selected
+                                            onChange={handleCategoryChange}
                                             required
+                                            label="Category"
                                         >
                                             {categories.map(category => (
                                                 <MenuItem key={category._id} value={category._id}>
@@ -314,6 +415,30 @@ const ProductAddEdit: React.FC<ProductAddEditProps> = () => {
                                     </FormControl>
                                 </Grid>
 
+                                <Grid item xs={12} sm={6}>
+                                    <FormControl fullWidth margin="normal">
+                                        <InputLabel
+                                            id="country-label"
+                                        // shrink={!!productDetails.category} // Shrink when a category is selected
+                                        >
+                                            Country
+                                        </InputLabel>
+                                        <Select
+                                            labelId="country-label"
+                                            name="country"
+                                            value={productDetails.country || ''} // Make sure it's empty string if no value is selected
+                                            onChange={handleCountryChange}
+                                            required
+                                            label="country"
+                                        >
+                                            {country.map(country => (
+                                                <MenuItem key={country._id} value={country._id}>
+                                                    {country.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
                                 <Grid item xs={12} display={'flex'}   >
                                     <FormControl component="fieldset">
                                         <FormLabel component="legend">Status</FormLabel>
