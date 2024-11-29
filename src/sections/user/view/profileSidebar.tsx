@@ -147,8 +147,8 @@ const ProfileDashboard = () => {
                     setSelectedOption('personal-details');
                     return setProfile(profile);
                 }} />;
-            case 'orders':
-                return <div>Orders Content</div>;
+            // case 'orders':
+            //     return <div>Orders Content</div>;
             case 'change-password':
                 return <UserPasswordUpdate />;
             case 'personal-details':
@@ -171,7 +171,7 @@ const ProfileDashboard = () => {
 
     const menuItems = [
         { text: 'Personal Details', icon: <User size={20} />, option: 'personal-details' },
-        { text: 'Orders', icon: <ShoppingCart size={20} />, option: 'orders' },
+        // { text: 'Orders', icon: <ShoppingCart size={20} />, option: 'orders' },
         { text: 'Edit Profile', icon: <UserCog size={20} />, option: 'edit' },
         { text: 'Change Password', icon: <KeyRound size={20} />, option: 'change-password' },
     ];

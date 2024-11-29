@@ -30,7 +30,7 @@
 //         fullWidth
 //         name="email"
 //         label="Email address"
-//         defaultValue="hello@gmail.com"
+//         defaultValue="hello@gmai
 //         InputLabelProps={{ shrink: true }}
 //         sx={{ mb: 3 }}
 //       />
@@ -172,9 +172,9 @@ export function SignInView() {
         sx={{ mb: 3 }}
       />
 
-      <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
+      {/* <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
         Forgot password?
-      </Link>
+      </Link> */}
 
       <TextField
         fullWidth
@@ -214,25 +214,25 @@ export function SignInView() {
     <>
       <Box gap={1.5} display="flex" flexDirection="column" alignItems="center" sx={{ mb: 5 }}>
         <Typography variant="h5">Sign in</Typography>
-        <Typography variant="body2" color="text.secondary">
+        {/* <Typography variant="body2" color="text.secondary">
           Don’t have an account?
           <Link variant="subtitle2" sx={{ ml: 0.5 }}>
             Get started
           </Link>
-        </Typography>
+        </Typography> */}
       </Box>
 
       {renderForm}
 
       <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
-        <Typography
+        {/* <Typography
           variant="overline"
           sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
         >
           OR
-        </Typography>
+        </Typography> */}
       </Divider>
-
+      {/* 
       <Box gap={1} display="flex" justifyContent="center">
         <IconButton color="inherit">
           <Iconify icon="logos:google-icon" />
@@ -243,7 +243,7 @@ export function SignInView() {
         <IconButton color="inherit">
           <Iconify icon="ri:twitter-x-fill" />
         </IconButton>
-      </Box>
+      </Box> */}
     </>
   );
 }

@@ -10,6 +10,8 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 import ProfileSidebar from 'src/sections/user/view/profileSidebar';
 import CategoryManagement from 'src/pages/cms/categoryPage';
 import { OrderView } from 'src/sections/orders/view/order-view';
+import { OrderDetailsPage } from 'src/sections/orders/view/order-details-view';
+
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +34,7 @@ export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products/products'));
 const TrashProductPage = lazy(() => import('src/pages/products/trashproduct'));
 const AddEditProductPage = lazy(() => import('src/pages/products/addEditProduct'));
+// const orderDetailsPage = lazy(() => import('src/sections/orders/view/order-details-view'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 // ----------------------------------------------------------------------
@@ -88,6 +91,10 @@ export function Router() {
         {
           path: 'orders',
           element: <OrderView />
+        },
+        {
+          path: 'order/:id/show',
+          element: <OrderDetailsPage />
         },
         {
           path: 'profile/:id',

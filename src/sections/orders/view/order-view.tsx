@@ -52,19 +52,51 @@ export function OrderView() {
     });
     const [orderBy, setOrderBy] = useState('name');
     const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-    useEffect(() => {
-        // Fetch user data from API
-        const fetchOrders = async () => {
-            try {
-                const response = await new ApiService().get('admin/orders/all');
-                setOrders(response.data.data);
-            } catch (error) {
-                console.error('Failed to fetch users:', error);
-            }
-        };
+    // const response = await new ApiService().get('admin/order/all');
 
-        fetchOrders();
-    }, []);
+
+
+    useEffect(() => {
+        fetchOrders(page, rowsPerPage);
+    }, [])
+
+
+
+    const fetchOrders = async (pageNum: number, limit: number) => {
+        try {
+            var endpoint =
+                'admin/order/all';
+            const params = new URLSearchParams({
+                page: (pageNum + 1).toString(),
+                count: limit.toString(),
+                // sort: `${order === 'desc' ? '-' : ''}${orderBy}`,
+                // search: filterName,
+            });
+
+
+            const search = filterName ? `&search=${filterName}` : '';
+
+            const response = await new ApiService().get(`${endpoint}?${params}${search}`);
+
+            console.log('api orders responsee', response);
+
+            setOrders(response.data.data);
+            setPaginationData({
+                totalItems: response.data.totalItems,
+                count: response.data.count,
+                page: response.data.page,
+                totalPages: response.data.totalPages,
+                isNextPage: response.data.isNextPage,
+                isPrevPage: response.data.isPrevPage,
+            });
+        } catch (error) {
+            console.error('Failed to fetch users:', error);
+            toast.error('Failed to fetch users');
+        }
+    }
+    useEffect(() => {
+        fetchOrders(page, rowsPerPage);
+    }, [page, rowsPerPage, orderBy, order, filterName]);
 
 
     const handleSort = (id: string) => {
@@ -96,7 +128,7 @@ export function OrderView() {
         <DashboardContent>
             <Box display="flex" alignItems="center" mb={5}>
                 <Typography variant="h4" flexGrow={1}>
-                    'Orders'
+                    Orders
                 </Typography>
                 <Button
                     variant="contained"
@@ -148,7 +180,8 @@ export function OrderView() {
                                     { id: 'total', label: 'total' },
 
                                     { id: 'status', label: 'Status' },
-                                    { id: 'options', label: 'Options' },
+                                    { id: 'date', label: 'Date' },
+                                    // { id: 'options', label: 'Options' }, 
                                 ]}
                             />
                             <TableBody>
@@ -172,6 +205,15 @@ export function OrderView() {
 
                                             }}
                                             onTrashRow={() => {
+
+                                            }}
+                                            onStatusChanged={(updatedStatus: any, orderId: any) => {
+
+                                                const updatedOrders = orders.map(order =>
+                                                    order._id === orderId ? { ...order, status: updatedStatus } : order
+                                                );
+                                                setOrders(updatedOrders);
+
 
                                             }}
                                             onEditRow={() => router.push(`/order/details/${row._id}`)}

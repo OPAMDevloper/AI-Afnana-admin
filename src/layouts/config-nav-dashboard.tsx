@@ -188,6 +188,13 @@ export const navData = [
 
   },
   {
+    title: 'Order Details',
+    path: '/order/:id/show',
+    icon: 'ic-order',
+    role: ['order']
+
+  },
+  {
     title: "Blogs",
     path: '/blogs',
     icon: 'ic-blog',
@@ -308,7 +315,7 @@ export const navData1: NavGroups = {
     {
       title: 'Country',
       path: '/country',
-      icon: 'country',
+      icon: 'ic-country',
       role: ['country']
     }
   ],

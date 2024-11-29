@@ -13,10 +13,30 @@ import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
 import { AnalyticsTrafficBySite } from '../analytics-traffic-by-site';
 import { AnalyticsCurrentSubject } from '../analytics-current-subject';
 import { AnalyticsConversionRates } from '../analytics-conversion-rates';
+import ApiService from 'src/service/network_service';
+import { useEffect, useState } from 'react';
 
 // ----------------------------------------------------------------------
 
-export function OverviewAnalyticsView() {
+
+
+export function OverviewAnalyticsView({ monthSales, totalSales, newUsers, totalUsers, montlyRevenue, totalMonthlyRevenue }: any) {
+  // const [monthSales, setMonthlySales] = useStae();
+
+
+  // const getMonthlySales = () => {
+  //   try {
+  //     const data = new ApiService().get('admin/dashboard/monthly-sales');
+  //     setMonthlySales(data);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
+
+
+
+
+
   return (
     <DashboardContent maxWidth="xl">
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
@@ -24,15 +44,16 @@ export function OverviewAnalyticsView() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={6}>
           <AnalyticsWidgetSummary
             title="Monthly sales"
-            percent={2.6}
-            total={714000}
+            percent={6}
+            total={totalSales}
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [22, 8, 35, 50, 82, 84, 77, 12],
+              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+              // series: [22, 8, 35, 50, 82, 84, 77, 12],
+              series: monthSales,
             }}
           />
         </Grid>
@@ -41,12 +62,13 @@ export function OverviewAnalyticsView() {
           <AnalyticsWidgetSummary
             title="New users"
             percent={-0.1}
-            total={1352831}
+            total={totalUsers}
             color="secondary"
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-users.svg" />}
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [56, 47, 40, 62, 73, 30, 23, 54],
+              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+              // series: [56, 47, 40, 62, 73, 30, 23, 54],
+              series: newUsers
             }}
           />
         </Grid>
@@ -55,12 +77,13 @@ export function OverviewAnalyticsView() {
           <AnalyticsWidgetSummary
             title="Monthly Revenue"
             percent={2.8}
-            total={1723315}
+            total={totalMonthlyRevenue}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [40, 70, 50, 28, 70, 75, 7, 64],
+              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+              // series: [40, 70, 50, 28, 70, 75, 7, 64],
+              series: montlyRevenue
             }}
           />
         </Grid>
@@ -123,8 +146,13 @@ export function OverviewAnalyticsView() {
 
 
 
-        <Grid xs={12} md={6} lg={8}>
-          <AnalyticsNews title="Trending Blogs" list={_posts.slice(0, 5)} />
+        <Grid xs={12} md={6} lg={6}>
+          <AnalyticsNews title="Recent Blogs" />
+
+        </Grid>
+
+        <Grid xs={12} md={6} lg={6}>
+          <AnalyticsNews title="Recent Products" />
         </Grid>
 
         {/* <Grid xs={12} md={6} lg={4}>

@@ -19,7 +19,7 @@ type OrderTableHeadProps = {
   onSelectAllRows: (checked: boolean) => void;
 };
 
-export function OrderTableHead({
+export function   OrderTableHead({
   order,
   onSort,
   orderBy,
@@ -31,7 +31,7 @@ export function OrderTableHead({
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
@@ -39,7 +39,7 @@ export function OrderTableHead({
               onSelectAllRows(event.target.checked)
             }
           />
-        </TableCell>
+        </TableCell> */}
 
         {headLabel.map((headCell) => (
           <TableCell

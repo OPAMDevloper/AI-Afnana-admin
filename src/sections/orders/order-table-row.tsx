@@ -10,20 +10,35 @@ import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { fToNow } from 'src/utils/format-time';
 import { useRouter } from 'src/routes/hooks';
+import { Alert, FormControl } from '@mui/material';
+import { InputLabel } from '@mui/material';
+import { Select } from '@mui/material';
+import ApiService from 'src/service/network_service';
+import { toast } from 'react-toastify';
+import { fDateTime, fToNow } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
 export type OrdersProps = {
   _id: string;
   name: string;
+  products: [
+    {
+      productId: {
+        name: string,
+        image: string,
+      },
+      quantity: number
+    }];
   status: string;
-  profileImage: string;
-  email: string;
-  isVerified: boolean;
+  userId: {
+    name: string
+  };
+  orders: string;
+  amount: string;
+  address: string;
   createdAt: string;
 };
 
@@ -35,13 +50,11 @@ type OrderTableRowProps = {
   onDeleteRow: (id: string) => void;
   onRestoreRow: (id: string) => void;
   onEditRow: (id: string) => void;
+  onStatusChanged: (updatedStatus: string, orderId: string) => void;
   onTrashRow: (id: string) => void;
-
 };
 
-
-
-export function OrderTableRow({ row, type, selected, onSelectRow, onDeleteRow, onRestoreRow, onEditRow, onTrashRow }: OrderTableRowProps) {
+export function OrderTableRow({ row, type, selected, onSelectRow, onDeleteRow, onRestoreRow, onEditRow, onTrashRow, onStatusChanged }: OrderTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
   const router = useRouter();
 
@@ -61,45 +74,72 @@ export function OrderTableRow({ row, type, selected, onSelectRow, onDeleteRow, o
   }, [row._id, onDeleteRow, handleClosePopover]);
 
 
+
+  const handleStatus = async (id: any, status: any) => {
+    try {
+      const response = await new ApiService().post(`admin/order/update/${id}`, { 'status': status });
+      row.status = status
+      onStatusChanged(status, id);
+      toast.success('Status updated successfully');
+    } catch (e) {
+      console.log(e);
+    }
+
+  }
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
-        </TableCell>
+        </TableCell> */}
 
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
-            <Avatar alt={row.name} src={import.meta.env.VITE_APP_BASE_URL + '/' + row.profileImage || ''} />
-            <a onClick={() => router.push(`/profile/${row._id}`)} style={{ cursor: 'pointer' }}>
-              {row.name}
+            <Avatar alt={row._id} src={import.meta.env.VITE_APP_BASE_URL + '/' + row.products[0].productId.image || ''} />
+            <a onClick={() => router.push(`/order/${row._id}/show`)} style={{ cursor: 'pointer' }}>
+              {row.products[0].productId.name}
             </a>
           </Box>
         </TableCell>
 
-        <TableCell>{row.email}</TableCell>
+        <TableCell>{row.userId?.name}</TableCell>
 
-        <TableCell>{fToNow(row?.createdAt)}</TableCell>
+        <TableCell>{row.amount}</TableCell>
 
-        <TableCell align="center">
-          {row.status === 'active' ? (
-            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
-          ) : (
-            // inacitve status
-            <Iconify width={22} icon="solar:close-circle-bold" sx={{ color: 'error.main' }} />
-          )}
-        </TableCell>
+        <TableCell>{row.products[0].quantity}</TableCell>
+
+        <TableCell>{row.amount}</TableCell>
 
         {/* <TableCell>
           <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
         </TableCell> */}
 
-        <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+
+        { /* make a drop down status for orders -> pending, shipped, delivered */}
+        <TableCell>
+          <FormControl fullWidth>
+            <InputLabel>Status</InputLabel>
+            <Select
+              value={row.status}
+              onChange={(value) => {
+                handleStatus(row._id, value.target.value)
+              }} // Handle status change
+              label="Status"
+            >
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="accepted">Accepted</MenuItem>
+              <MenuItem value="completed ">Completed</MenuItem>
+            </Select>
+          </FormControl>
         </TableCell>
+
+        <TableCell>{fDateTime(row.createdAt)}</TableCell>
+
+
       </TableRow>
+
+
 
       <Popover
         open={!!openPopover}

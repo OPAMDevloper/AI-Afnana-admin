@@ -14,24 +14,45 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import type { PostItemProps } from '../blog/post-item';
+import { useEffect, useState } from 'react';
+import ApiService from 'src/service/network_service';
 
 // ----------------------------------------------------------------------
 
 type Props = CardProps & {
   title?: string;
   subheader?: string;
-  list: PostItemProps[];
 };
 
-export function AnalyticsNews({ title, subheader, list, ...other }: Props) {
+
+
+export function AnalyticsNews({ title, subheader, ...other }: Props) {
+
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+
+    const getData = async () => {
+      const response = await new ApiService().get('admin/blog/recent');
+      // const data = await response.json();
+
+      setList(response.data);
+    };
+
+    getData();
+  }, []);
+
+
+
+
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 1 }} />
 
       <Scrollbar sx={{ minHeight: 405 }}>
         <Box sx={{ minWidth: 640 }}>
-          {list.map((post) => (
-            <PostItem key={post.id} item={post} />
+          {list.map((data: any) => (
+            <PostItem key={data._id} item={data} />
           ))}
         </Box>
       </Scrollbar>
@@ -51,13 +72,13 @@ export function AnalyticsNews({ title, subheader, list, ...other }: Props) {
 
 // ----------------------------------------------------------------------
 
-function PostItem({ sx, item, ...other }: BoxProps & { item: Props['list'][number] }) {
+function PostItem({ sx, item, ...other }: BoxProps & { item: any }) {
   return (
     <Box
       sx={{
         py: 2,
         px: 3,
-        gap: 2,
+        gap: 1,
         display: 'flex',
         alignItems: 'center',
         borderBottom: (theme) => `dashed 1px ${theme.vars.palette.divider}`,
@@ -68,11 +89,12 @@ function PostItem({ sx, item, ...other }: BoxProps & { item: Props['list'][numbe
       <Avatar
         variant="rounded"
         alt={item.title}
-        src={item.coverUrl}
+        src={import.meta.env.BASE_URL + '/' + item.image}
         sx={{ width: 48, height: 48, flexShrink: 0 }}
       />
 
       <ListItemText
+        sx={{ width: '10 ' }}
         primary={item.title}
         secondary={item.description}
         primaryTypographyProps={{ noWrap: true, typography: 'subtitle2' }}
@@ -80,7 +102,7 @@ function PostItem({ sx, item, ...other }: BoxProps & { item: Props['list'][numbe
       />
 
       <Box sx={{ flexShrink: 0, color: 'text.disabled', typography: 'caption' }}>
-        {fToNow(item.postedAt)}
+        {fToNow(item.createdAt)}
       </Box>
     </Box>
   );
